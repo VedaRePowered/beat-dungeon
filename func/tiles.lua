@@ -7,6 +7,7 @@ local tileFactor = 2
 function tiles.declareTiles()
 	tiles.declare("pillar", false, "tiles/pillar", false)
 	tiles.declare("spikes", false, "tiles/spikes1", true)
+	tiles.declare("skeleton", "skeleton", "tiles/skelebonesRight", false)
 end
 
 function tiles.declare(name, patternFile, image, underPlayer)
@@ -14,7 +15,7 @@ function tiles.declare(name, patternFile, image, underPlayer)
 	if patternFile then
 		p = io.open("assets/patterns/" .. patternFile .. ".txt")
 		pattern = {}
-		for _, action in p:lines() do
+		for action in p:lines() do
 			table.insert(pattern, action)
 		end
 		p.close()

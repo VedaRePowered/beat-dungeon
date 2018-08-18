@@ -20,6 +20,11 @@ function love.update(delta)
 	local hasEnded
 
 	beatsPassed, hasEnded = song.getBeatsPassed(delta)
+	if beatsPassed > 0 then
+		for bn = 1, beatsPassed do
+			ai.update()
+		end
+	end
 
 	if hasEnded then
 		love.event.quit(0)
@@ -29,9 +34,4 @@ end
 function love.draw()
 	backgrounds.draw("cobblestone")
 	world.draw()
-
-	if (beatsPassed > 0) then
-		love.graphics.setColor(255,255,255)
-		love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
-	end
 end

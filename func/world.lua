@@ -1,5 +1,6 @@
 local world = {}
 local worldTiles = {}
+local tileRotations = {}
 
 local heightInBlocks = 100
 local widthInBlocks = 16
@@ -9,26 +10,55 @@ function world.getSize()
 	return widthInBlocks, heightInBlocks
 end
 function world.get(x, y)
+	local rotation
+	if tileRotations[y] then
+		rotation = tileRotations[y][x]
+	end
 	if worldTiles[y] then
-		return tiles.get(worldTiles[y][x])
+		return tiles.get(worldTiles[y][x]), rotation
 	else
 		return false
 	end
 end
-function world.set(x, y, tile)
+function world.getID(x, y)
+	local rotation
+	if tileRotations[y] then
+		rotation = tileRotations[y][x]
+	end
+	if worldTiles[y] then
+		return worldTiles[y][x], rotation
+	else
+		return false
+	end
+end
+function world.set(x, y, tile, rotation)
 	if not worldTiles[y] then
 		worldTiles[y] = {}
 	end
 	worldTiles[y][x] = tile
+	if rotation then
+		if not tileRotations[y] then
+			tileRotations[y] = {}
+		end
+		tileRotations[y][x] = rotation
+	end
+end
+function world.unset(x, y)
+	if worldTiles[y] then
+		worldTiles[y][x] = nil
+	end
 end
 function world.gen()
 	for y = 1, heightInBlocks do
 		for x = 1, widthInBlocks do
-			world.set(x, y, tiles.random())
+			if math.random(1, 15) == 1 then
+				local tile = tiles.random()
+				world.set(x, y, tile, 1)
+				if tiles.get(tile).pattern then
+					ai.new(x, y, tiles.get(tile).pattern)
+				end
+			end
 		end
-	end
-	for x = 3, 13 do
-		print(worldTiles[30][x])
 	end
 end
 function world.limitMovement(oldX, oldY, newX, newY)
