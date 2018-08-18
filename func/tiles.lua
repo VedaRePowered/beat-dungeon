@@ -5,12 +5,12 @@ local tileSize = 32
 local tileFactor = 2
 
 function tiles.declareTiles()
-	tiles.declare("pillar", false, "tiles/pillar", false)
-	tiles.declare("spikes", false, "tiles/spikes1", true)
-	tiles.declare("skeleton", "skeleton", "tiles/skelebonesRight", false)
+	tiles.declare("pillar", false, "tiles/pillar", false, false)
+	tiles.declare("spikes", false, "tiles/spikes1", true, false)
+	tiles.declare("skeleton", "skeleton", "tiles/skelebones", false, true)
 end
 
-function tiles.declare(name, patternFile, image, underPlayer)
+function tiles.declare(name, patternFile, image, underPlayer, rotatable)
 	id = #tileList + 1
 	if patternFile then
 		p = io.open("assets/patterns/" .. patternFile .. ".txt")
@@ -22,12 +22,26 @@ function tiles.declare(name, patternFile, image, underPlayer)
 	else
 		pattern = false
 	end
-	local img = love.graphics.newImage("assets/" .. image .. ".png")
-	img:setFilter("nearest")
+	local images = {}
+	if rotatable then
+		table.insert(images, love.graphics.newImage("assets/" .. image .. "Right.png"))
+		table.insert(images, love.graphics.newImage("assets/" .. image .. "Up.png"))
+		table.insert(images, love.graphics.newImage("assets/" .. image .. "Left.png"))
+		table.insert(images, love.graphics.newImage("assets/" .. image .. "Down.png"))
+	else
+		local img = love.graphics.newImage("assets/" .. image .. ".png")
+		for i = 1, 4 do
+			table.insert(images, img)
+		end
+	end
+	for _, img in ipairs(images) do
+		img:setFilter("nearest")
+	end
 	tileList[id] = {
+		id=id,
 		name=name,
 		pattern=pattern,
-		image=img,
+		images=images,
 		underPlayer=underPlayer
 	}
 end
@@ -39,5 +53,8 @@ function tiles.random()
 end
 function tiles.get(id)
 	return tileList[id]
+end
+function tiles.getImage(id, rotation)
+	return tileList[id].images[rotation]
 end
 return tiles

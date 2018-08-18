@@ -2,8 +2,8 @@ local world = {}
 local worldTiles = {}
 local tileRotations = {}
 
-local heightInBlocks = 100
-local widthInBlocks = 16
+local heightInBlocks
+local widthInBlocks
 local tileSize, tileFactor = tiles.getTileSizeAndFactor()
 
 function world.getSize()
@@ -48,9 +48,11 @@ function world.unset(x, y)
 		worldTiles[y][x] = nil
 	end
 end
-function world.gen()
-	for y = 1, heightInBlocks do
-		for x = 1, widthInBlocks do
+function world.gen(width, height)
+	widthInBlocks = width
+	heightInBlocks = height
+	for y = 1, height do
+		for x = 1, width do
 			if math.random(1, 15) == 1 then
 				local tile = tiles.random()
 				world.set(x, y, tile, 1)
@@ -86,9 +88,10 @@ function world.limitMovement(oldX, oldY, newX, newY)
 end
 function drawRow(width, height, tilePlayerX, tilePlayerY, pOffsetX, pOffsetY, screenBlocksX, y, underPlayer)
 	for x = math.floor(-screenBlocksX/2), screenBlocksX/2 do
-		local tile = world.get(tilePlayerX + x, tilePlayerY + y)
+		local tile, rotation = world.get(tilePlayerX + x, tilePlayerY + y)
 		if tile and tile.underPlayer == underPlayer then
-			love.graphics.draw(tile.image, (x-pOffsetX)*tileSize*tileFactor+width/2, 720-((y-pOffsetY)*tileSize*tileFactor+height/2)-128, 0, tileFactor, tileFactor)
+			local image = tiles.getImage(tile.id, rotation)
+			love.graphics.draw(image, (x-pOffsetX)*tileSize*tileFactor+width/2, 720-((y-pOffsetY)*tileSize*tileFactor+height/2)-128, 0, tileFactor, tileFactor)
 		end
 	end
 end

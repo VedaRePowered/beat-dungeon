@@ -8,10 +8,10 @@ function love.load()
 	ai			= require "func.ai"
 
 	tiles.declareTiles()
-	world.gen()
 	player.initializeJoystick()
 
 	song = music.loadSong("assets/music/bensound-house.mp3")
+	world.gen(16, song.getSongLength() * 4 + 32)
 	song.play()
 end
 

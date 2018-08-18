@@ -1,6 +1,6 @@
 local player = {}
 local playerX = 8
-local playerY = 10
+local playerY = 32
 local playerWidth = 32
 local playerHeight = 32
 local joystick
