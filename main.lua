@@ -1,10 +1,11 @@
-
+local beatsPassed = 0
 function love.load()
 	world		= require "func.world"
 	music		= require "func.music"
 	tiles		= require "func.tiles"
 	player		= require "func.player"
 	backgrounds	= require "func.backgrounds"
+	ai			= require "func.ai"
 
 	tiles.declareTiles()
 	world.gen()
@@ -13,8 +14,6 @@ function love.load()
 	song = music.loadSong("assets/music/bensound-house.mp3")
 	song.play()
 end
-
-local beatsPassed = 0
 
 function love.update(delta)
 	player.update(delta)

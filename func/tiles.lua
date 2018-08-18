@@ -2,22 +2,28 @@ local tiles = {}
 local tileList = {}
 
 function tiles.declareTiles()
-	tiles.declare("pillar", "none", "tiles/pillar", false)
-	tiles.declare("spikes", "none", "tiles/spikes1", true)
+	tiles.declare("pillar", false, "tiles/pillar", false)
+	tiles.declare("spikes", false, "tiles/spikes1", true)
 end
 
 function tiles.declare(name, patternFile, image, underPlayer)
 	id = #tileList + 1
-	p = io.open("assets/patterns/" .. patternFile .. ".txt")
-	pattern = {}
-	for _, action in p:lines() do
-		table.insert(pattern, action)
+	if patternFile then
+		p = io.open("assets/patterns/" .. patternFile .. ".txt")
+		pattern = {}
+		for _, action in p:lines() do
+			table.insert(pattern, action)
+		end
+		p.close()
+	else
+		pattern = false
 	end
-	p.close()
+	local img = love.graphics.newImage("assets/" .. image .. ".png")
+	img:setFilter("nearest")
 	tileList[id] = {
 		name=name,
 		pattern=pattern,
-		image=love.graphics.newImage("assets/" .. image .. ".png"),
+		image=img,
 		underPlayer=underPlayer
 	}
 end
