@@ -1,5 +1,7 @@
 local world = {}
 local worldTiles = {}
+local leftWalls = {}
+local rightWalls = {}
 local tileRotations = {}
 
 local heightInBlocks
@@ -52,6 +54,9 @@ function world.gen(width, height)
 	widthInBlocks = width
 	heightInBlocks = height
 	for y = 1, height do
+		world.set(0, y, tiles.randomWall("left"), 1)
+		world.set(width + 1, y, tiles.randomWall("right"), 1)
+
 		for x = 1, width do
 			if math.random(1, 15) == 1 then
 				local tile = tiles.random()
