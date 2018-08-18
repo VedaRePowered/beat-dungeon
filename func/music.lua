@@ -337,6 +337,10 @@ function music.loadSong(songPath)
 		return beatCount, hasEnded
 	end
 
+	function songObject.getBeat()
+		return nextBeat - 1
+	end
+
 	return songObject
 end
 
