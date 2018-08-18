@@ -11,39 +11,29 @@ function player.getPosition()
 	return playerX, playerY
 end
 function player.update(delta)
+	local newPlayerX = playerX
+	local newPlayerY = playerY
 	if joystick then
 		if math.abs(joystick:getAxis(1)) > 0.1 then
-			playerX = playerX + joystick:getAxis(1) * delta * 4
+			newPlayerX = playerX + joystick:getAxis(1) * delta * 4
 		end
 		if math.abs(joystick:getAxis(2)) > 0.1 then
-			playerY = playerY - joystick:getAxis(2) * delta * 4
+			newPlayerY = playerY - joystick:getAxis(2) * delta * 4
 		end
 	else
 		if love.keyboard.isDown("up") then
-			playerY = playerY + delta * 4
+			newPlayerY = playerY + delta * 4
 		elseif love.keyboard.isDown("down") then
-			playerY = playerY - delta * 4
+			newPlayerY = playerY - delta * 4
 		end
 		if love.keyboard.isDown("right") then
-			playerX = playerX + delta * 4
+			newPlayerX = playerX + delta * 4
 		elseif love.keyboard.isDown("left") then
-			playerX = playerX - delta * 4
+			newPlayerX = playerX - delta * 4
 		end
 	end
 
-	local width, height = world.getSize()
-	if playerX < 1 then
-		playerX = 1
-	end
-	if playerX > width + 1 then
-		playerX = width + 1
-	end
-	if playerY < 1 then
-		playerY = 1
-	end
-	if playerY > height + 1 then
-		playerY = height + 1
-	end
+	playerX, playerY = world.limitMovement(playerX, playerY, newPlayerX, newPlayerY)
 	-- print("player: " .. playerX .. ", " .. playerY)
 end
 function player.draw()
