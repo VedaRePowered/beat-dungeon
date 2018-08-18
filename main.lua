@@ -1,8 +1,8 @@
 local beatsPassed = 0
 function love.load()
+	tiles		= require "func.tiles"
 	world		= require "func.world"
 	music		= require "func.music"
-	tiles		= require "func.tiles"
 	player		= require "func.player"
 	backgrounds	= require "func.backgrounds"
 	ai			= require "func.ai"

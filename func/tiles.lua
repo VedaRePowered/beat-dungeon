@@ -1,6 +1,9 @@
 local tiles = {}
 local tileList = {}
 
+local tileSize = 32
+local tileFactor = 2
+
 function tiles.declareTiles()
 	tiles.declare("pillar", false, "tiles/pillar", false)
 	tiles.declare("spikes", false, "tiles/spikes1", true)
@@ -26,6 +29,9 @@ function tiles.declare(name, patternFile, image, underPlayer)
 		image=img,
 		underPlayer=underPlayer
 	}
+end
+function tiles.getTileSizeAndFactor()
+	return tileSize, tileFactor
 end
 function tiles.random()
 	return math.random(1, #tileList)
