@@ -199,6 +199,27 @@ end
 
 
 --
+-- Perform a low pass filter on the samples.
+--
+function lowPassFilter(samples, sampleRate, frequency)
+	-- tau is the number of seconds in one wavelength of the low pass frequency
+	local tau = 1 / frequency
+	-- formula for alpha from https://www.embeddedrelated.com/showarticle/779.php
+	local alpha = (1 / sampleRate) / tau
+
+	local lowPasSamples = {}
+	local yk = samples[1]
+	lowPasSamples[1] = yk
+	for i = 2, #samples do
+		yk = yk + alpha * (samples[i] - yk)
+		lowPasSamples[i] = yk
+	end
+
+	return lowPasSamples
+end
+
+
+--
 -- Compute the BPM and offset for the given audio samples.
 --
 function computeBpmAndOffset(samples, sampleRate)
@@ -233,6 +254,19 @@ end
 
 
 --
+-- Extract the audio samples from the given SongData
+-- into a floating point array (table).
+--
+function setSamples(songData, newSamples)
+	local sampleCount = songData:getSampleCount()
+
+	for i = 1, sampleCount do
+		songData:setSample(i - 1, newSamples[i])
+	end
+end
+
+
+--
 -- Generates an array of beat timing positions in
 -- seconds for a song.
 --
@@ -240,7 +274,8 @@ function getBeats(songData)
 	local duration = songData:getDuration()
 	local sampleRate = songData:getSampleRate()
 	local samples = getSamples(songData)
-	local beatsPerMinute, offset = computeBpmAndOffset(samples, sampleRate)
+	local lowPasSamples = lowPassFilter(samples, sampleRate, 300)
+	local beatsPerMinute, offset = computeBpmAndOffset(lowPasSamples, sampleRate)
 	local secondsPerBeat = 60 / beatsPerMinute
 
 	print("Duration is " .. duration)
