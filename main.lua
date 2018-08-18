@@ -7,6 +7,7 @@ function love.load()
 
 	tiles.declareTiles()
 	world.gen()
+	player.initializeJoystick()
 end
 
 function love.update(delta)
