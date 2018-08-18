@@ -23,7 +23,7 @@ function world.gen()
 		print(worldTiles[30][x])
 	end
 end
-function world.draw()
+function draw(underPlayer)
 	local width, height = love.window.getMode()
 	local playerX, playerY = player.getPosition()
 	local pOffsetX = playerX - math.floor(playerX)
@@ -33,10 +33,15 @@ function world.draw()
 	for x = math.floor(-screenBlocksX/2), screenBlocksX/2 do
 		for y = math.floor(screenBlocksY/2), -screenBlocksY/2-1, -1 do
 			tile = world.get(math.floor(playerX) + x, math.floor(playerY) + y)
-			if tile then
+			if tile and tile.underPlayer == underPlayer then
 				love.graphics.draw(tile.image, (x-pOffsetX)*32*2+width/2, 720-((y-pOffsetY)*32*2+height/2)-128, 0, 2, 2)
 			end
 		end
 	end
+end
+function world.draw()
+	draw(true)
+	player.draw()
+	draw(false)
 end
 return world
