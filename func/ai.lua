@@ -39,6 +39,38 @@ function ai.update()
 				rotation = 4
 			end
 			world.set(tile.x, tile.y, type, rotation)
+		elseif string.sub(action, 1, 4) == "east" then
+			local type, rotation = world.getID(tile.x, tile.y)
+			if not world.get(tile.x+1, tile.y) then
+				--print("moved", type, "to", newX, newY)
+				world.set(tile.x+1, tile.y, type, 1)
+				world.unset(tile.x, tile.y)
+				tile.x = tile.x + 1
+			end
+		elseif string.sub(action, 1, 4) == "west" then
+			local type, rotation = world.getID(tile.x, tile.y)
+			if not world.get(tile.x-1, tile.y) then
+				--print("moved", type, "to", newX, newY)
+				world.set(tile.x-1, tile.y, type, 3)
+				world.unset(tile.x, tile.y)
+				tile.x = tile.x - 1
+			end
+		elseif string.sub(action, 1, 5) == "north" then
+			local type, rotation = world.getID(tile.x, tile.y)
+			if not world.get(tile.x, tile.y+1) then
+				--print("moved", type, "to", newX, newY)
+				world.set(tile.x, tile.y+1, type, 2)
+				world.unset(tile.x, tile.y)
+				tile.y = tile.y + 1
+			end
+		elseif string.sub(action, 1, 5) == "south" then
+			local type, rotation = world.getID(tile.x, tile.y)
+			if not world.get(tile.x, tile.y-1) then
+				--print("moved", type, "to", newX, newY)
+				world.set(tile.x, tile.y-1, type, 4)
+				world.unset(tile.x, tile.y)
+				tile.y = tile.y - 1
+			end
 		end
 	end
 end

@@ -8,6 +8,8 @@ function tiles.declareTiles()
 	tiles.declare("pillar", false, "tiles/pillar", false, false)
 	tiles.declare("spikes", false, "tiles/spikes1", true, false)
 	tiles.declare("skeleton", "skeleton", "tiles/skelebones", false, true)
+	tiles.declare("green slime", "slime1", "tiles/greenslime", false, true)
+	tiles.declare("blue slime", "slime2", "tiles/blueslime", false, true)
 end
 
 function tiles.declare(name, patternFile, image, underPlayer, rotatable)
