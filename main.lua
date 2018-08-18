@@ -1,3 +1,4 @@
+
 function love.load()
 	world		= require "func.world"
 	music		= require "func.music"
@@ -10,11 +11,19 @@ function love.load()
 	player.initializeJoystick()
 end
 
+local beatsPassed = 0
+
 function love.update(delta)
 	player.update(delta)
+	beatsPassed = music.getBeatsPassed(delta)
 end
 
 function love.draw()
 	backgrounds.draw("cobblestone")
 	world.draw()
+
+	if (beatsPassed > 0) then
+		love.graphics.setColor(255,255,255)
+		love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+	end
 end
