@@ -95,31 +95,63 @@ end
 -- nrg is float array
 -- slowest is the lowest possible BPM
 -- fastest is the highest possible BPM
--- steps is ??
--- samples is ??
--- sampleRate is the sample rate of the sone in Hz
-function scanForBpmAndOffset(nrg, slowest, fastest, steps, samples, sampleRate)
+-- steps is the number of BPMs to try
+-- samples is the number of samples to take for each BPM
+-- sampleRate is the sample rate of the song in Hz
+--
+-- inspired by http://www.pogo.org.uk/~mark/bpm-tools/
+function scanForBpm(nrg, slowest, fastest, steps, samples, sampleRate)
 	local slowestInterval = bpmToInterval(slowest, sampleRate)
 	local fastestInterval = bpmToInterval(fastest, sampleRate)
 	local step = (slowestInterval - fastestInterval) / steps;
 
 	local height = math.huge
 	local trough
-	local finalMidpoint
 
 	for interval = fastestInterval, slowestInterval, step do
 		local total = 0.0
 
-		local midpointHeight = math.huge
-		local bestMidpoint
 		for s = 0, samples do
 			local midpoint = math.random(1, #nrg)
 			local diff = autodifference(nrg, interval, midpoint)
 
-			if (diff < midpointHeight) then
-				bestMidpoint = midpoint
-				midpointHeight = diff
-			end
+			total = total + diff
+		end
+
+		-- Track the lowest value (best match)
+
+		if (total < height) then
+			trough = interval
+			height = total
+		end
+	end
+
+	-- print("Final interval is " .. trough)
+
+	return intervalToBpm(trough, sampleRate)
+end
+
+
+--
+-- Scan a range of offset values for the one with the
+-- minimum (maximum?) autodifference
+--
+-- nrg is float array
+-- beatsPerMinute is the BPM
+-- sampleRate is the sample rate of the song in Hz
+function scanForOffset(nrg, beatsPerMinute, sampleRate)
+	local interval = bpmToInterval(beatsPerMinute, sampleRate)
+	local totalIntervals = math.floor(#nrg / interval)
+
+	local height = math.huge
+	local trough
+
+	for offsetSamples = 0, interval, 0.5 do
+		local total = 0.0
+
+		for s = 1, totalIntervals do
+			local midpoint = s * interval + offsetSamples
+			local diff = autodifference(nrg, interval, midpoint)
 
 			total = total + diff
 		end
@@ -127,28 +159,23 @@ function scanForBpmAndOffset(nrg, slowest, fastest, steps, samples, sampleRate)
 		-- Track the lowest value
 
 		if (total < height) then
-			trough = interval
+			trough = offsetSamples
 			height = total
-			finalMidpoint = bestMidpoint
 		end
 	end
 
-	local beatsPerMinute = intervalToBpm(trough, sampleRate)
-
-	local midpointSample = finalMidpoint * NRG_SAMPLING_INTERVAL
-	local midpointTime = midpointSample / sampleRate
+	local offsetSample = trough * NRG_SAMPLING_INTERVAL
+	local offsetTime = offsetSample / sampleRate
 	local secondsPerBeat = 60 / beatsPerMinute
-	local midpointOffset = midpointTime - math.floor(midpointTime / secondsPerBeat) * secondsPerBeat
-	local offset = secondsPerBeat - midpointOffset
+	local offset = secondsPerBeat - offsetTime
 
-	-- print("Best midpoint is " .. finalMidpoint)
-	-- print("Midpoint sample is " .. midpointSample)
-	-- print("Midpoint time is " .. midpointTime)
+	-- print("Best offset NRG sample is " .. trough)
+	-- print("Offset sample is " .. offsetSample)
+	-- print("Offset time is " .. offsetTime)
 	-- print("Seconds per beat is " .. secondsPerBeat)
-	-- print("Midpoint offset is " .. midpointOffset)
 	-- print("Offset offset is " .. offset)
 
-	return beatsPerMinute, offset
+	return offset
 end
 
 
@@ -192,11 +219,14 @@ function computeBpmAndOffset(samples, sampleRate)
 	local SLOWEST_BPM = 84
 	local FASTEST_BPM = 146
 	local BPM_STEPS = 2048
-	local BPM_SAMPLES = 2048
+	local BPM_SAMPLES = 1024
 
 	local nrg = samplesToNrg(samples)
 
-	return scanForBpmAndOffset(nrg, SLOWEST_BPM, FASTEST_BPM, BPM_STEPS, BPM_SAMPLES, sampleRate);
+	local beatsPerMinute = scanForBpm(nrg, SLOWEST_BPM, FASTEST_BPM, BPM_STEPS, BPM_SAMPLES, sampleRate)
+	local offset = scanForOffset(nrg, beatsPerMinute, sampleRate)
+
+	return beatsPerMinute, offset
 end
 
 
