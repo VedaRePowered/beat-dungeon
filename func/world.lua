@@ -22,17 +22,6 @@ function world.get(x, y)
 		return false
 	end
 end
-function world.getID(x, y)
-	local rotation
-	if tileRotations[y] then
-		rotation = tileRotations[y][x]
-	end
-	if worldTiles[y] then
-		return worldTiles[y][x], rotation
-	else
-		return false
-	end
-end
 function world.set(x, y, tile, rotation)
 	if not worldTiles[y] then
 		worldTiles[y] = {}
