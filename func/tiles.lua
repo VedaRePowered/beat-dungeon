@@ -2,7 +2,8 @@ local tiles = {}
 local tileList = {}
 
 function tiles.declareTiles()
-	tiles.declare("piller", "none", "tiles/piller")
+	tiles.declare("pillar", "none", "tiles/pillar")
+	tiles.declare("spikes", "none", "tiles/spikes1")
 end
 
 function tiles.declare(name, patternFile, image)
