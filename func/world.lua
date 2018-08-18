@@ -1,8 +1,15 @@
 local world = {}
 local worldTiles = {}
+
+local heightInBlocks = 100
+local widthInBlocks = 16
+
+function world.getSize()
+	return widthInBlocks, heightInBlocks
+end
 function world.get(x, y)
 	if worldTiles[y] then
-			return tiles.get(worldTiles[y][x])
+		return tiles.get(worldTiles[y][x])
 	else
 		return false
 	end
@@ -14,8 +21,8 @@ function world.set(x, y, tile)
 	worldTiles[y][x] = tile
 end
 function world.gen()
-	for y = 1, 100 do
-		for x = 1, 16 do
+	for y = 1, heightInBlocks do
+		for x = 1, widthInBlocks do
 			world.set(x, y, tiles.random())
 		end
 	end

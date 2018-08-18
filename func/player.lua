@@ -22,6 +22,21 @@ function player.update(delta)
 	if math.abs(joystick:getAxis(2)) > 0.1 then
 		playerY = playerY - joystick:getAxis(2) * delta * 4
 	end
+
+	local width, height = world.getSize()
+	if playerX < 1 then
+		playerX = 1
+	end
+	if playerX > width + 1 then
+		playerX = width + 1
+	end
+	if playerY < 1 then
+		playerY = 1
+	end
+	if playerY > height + 1 then
+		playerY = height + 1
+	end
+	-- print("player: " .. playerX .. ", " .. playerY)
 end
 function player.draw()
 	local width, height = love.window.getMode()
