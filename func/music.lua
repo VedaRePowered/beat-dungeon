@@ -1,17 +1,3 @@
-local music = {}
-
-local songPath = "assets/music/bensound-house.mp3"
-local songDataShared = nil
-
-function getSongData()
-	if songDataShared == nil then
-		songDataShared = love.sound.newSoundData(songPath)
-	end
-
-	return songDataShared
-end
-
-
 --
 -- Sample from the metered energy
 --
@@ -250,21 +236,19 @@ end
 -- Generates an array of beat timing positions in
 -- seconds for a song.
 --
-function getBeats()
-	local songData = getSongData()
+function getBeats(songData)
 	local duration = songData:getDuration()
-	print("Duration is " .. duration)
-
 	local sampleRate = songData:getSampleRate()
-	print("Sample rate is " .. sampleRate)
-
 	local samples = getSamples(songData)
 	local beatsPerMinute, offset = computeBpmAndOffset(samples, sampleRate)
+	local secondsPerBeat = 60 / beatsPerMinute
+
+	print("Duration is " .. duration)
+	print("Sample rate is " .. sampleRate)
 	print("BPM is " .. beatsPerMinute)
+	print("Seconds per beat: " .. secondsPerBeat)
 	print("Offset is " .. offset)
 
-	local secondsPerBeat = 60 / beatsPerMinute
-	print("Seconds per beat: " .. secondsPerBeat)
 	local nextBeat = offset
 
 	local beats = {}
@@ -278,32 +262,47 @@ function getBeats()
 end
 
 
-local beats = getBeats()
+local music = {}
 
-local source = love.audio.newSource(getSongData())
-love.audio.play(source)
+function music.loadSong(songPath)
+	local songObject = {}
 
-local lastTime = 0
-local nextBeat = 1
+	local songData = love.sound.newSoundData(songPath)
+	local duration = songData:getDuration()
+	local beats = getBeats(songData)
+	local source = love.audio.newSource(songData)
 
-
-function music.getSongLength()
-	return getSongData():getDuration()
-end
-
-
-function music.getBeatsPassed(delta)
-	local beatCount = 0
-	local newTime = lastTime + delta
-
-	while nextBeat <= #beats and beats[nextBeat] < newTime do
-		beatCount = beatCount + 1
-		nextBeat = nextBeat + 1
+	function songObject.play()
+		love.audio.play(source)
 	end
 
-	lastTime = newTime
+	function songObject.stop()
+		love.audio.stop(source)
+	end
 
-	return beatCount
+	function songObject.getSongLength()
+		return duration
+	end
+
+	local lastTime = 0
+	local nextBeat = 1
+
+	function songObject.getBeatsPassed(delta)
+		local beatCount = 0
+		local newTime = lastTime + delta
+		local hasEnded = newTime > duration
+
+		while nextBeat <= #beats and beats[nextBeat] < newTime do
+			beatCount = beatCount + 1
+			nextBeat = nextBeat + 1
+		end
+
+		lastTime = newTime
+
+		return beatCount, hasEnded
+	end
+
+	return songObject
 end
 
 return music

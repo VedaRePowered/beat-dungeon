@@ -9,13 +9,22 @@ function love.load()
 	tiles.declareTiles()
 	world.gen()
 	player.initializeJoystick()
+
+	song = music.loadSong("assets/music/bensound-house.mp3")
+	song.play()
 end
 
 local beatsPassed = 0
 
 function love.update(delta)
 	player.update(delta)
-	beatsPassed = music.getBeatsPassed(delta)
+	local hasEnded
+
+	beatsPassed, hasEnded = song.getBeatsPassed(delta)
+
+	if hasEnded then
+		love.event.quit(0)
+	end
 end
 
 function love.draw()
