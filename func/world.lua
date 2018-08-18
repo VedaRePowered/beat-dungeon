@@ -31,10 +31,10 @@ function world.draw()
 	local screenBlocksX = math.ceil(width/32/2)
 	local screenBlocksY = math.ceil(height/32/2)
 	for x = math.floor(-screenBlocksX/2), screenBlocksX/2 do
-		for y = math.floor(-screenBlocksY/2), screenBlocksY/2 do
+		for y = math.floor(screenBlocksY/2), -screenBlocksY/2-1, -1 do
 			tile = world.get(math.floor(playerX) + x, math.floor(playerY) + y)
 			if tile then
-				love.graphics.draw(tile.image, (x-pOffsetX)*32*2+width/2, 720-((y-pOffsetY)*32*2+height/2)-192, 0, 2, 2)
+				love.graphics.draw(tile.image, (x-pOffsetX)*32*2+width/2, 720-((y-pOffsetY)*32*2+height/2)-128, 0, 2, 2)
 			end
 		end
 	end
