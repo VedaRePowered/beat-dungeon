@@ -72,6 +72,10 @@ function ai.update()
 				tile.y = tile.y - 1
 			end
 		end
+		local playerX, playerY = player.getPosition()
+		if tile.x == math.floor(playerX) and tile.y == math.floor(playerY) then
+			mode = "end"
+		end
 	end
 end
 return ai

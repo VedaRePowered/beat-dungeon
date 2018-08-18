@@ -7,6 +7,8 @@ function love.load()
 	backgrounds	= require "func.backgrounds"
 	ai			= require "func.ai"
 
+	mode = "game"
+
 	tiles.declareTiles()
 	player.initializeJoystick()
 
@@ -16,22 +18,32 @@ function love.load()
 end
 
 function love.update(delta)
-	player.update(delta)
-	local hasEnded
+	if mode == "game" then
+		player.update(delta)
+		local hasEnded
 
-	beatsPassed, hasEnded = song.getBeatsPassed(delta)
-	if beatsPassed > 0 then
-		for bn = 1, beatsPassed do
-			ai.update()
+		beatsPassed, hasEnded = song.getBeatsPassed(delta)
+		if beatsPassed > 0 then
+			for bn = 1, beatsPassed do
+				ai.update()
+			end
 		end
-	end
 
-	if hasEnded then
-		love.event.quit(0)
+		if hasEnded then
+			mode = "end"
+		end
+	elseif mode == "end" then
+
 	end
+	local _, playerX = player.getPosition()
+	score = math.floor(playerX - 32)
 end
 
 function love.draw()
-	backgrounds.draw("cobblestone")
-	world.draw()
+	if mode == "game" then
+		backgrounds.draw("cobblestone")
+		world.draw()
+	elseif mode == "end" then
+		love.graphics.print("score: " .. score, 640, 300)
+	end
 end
