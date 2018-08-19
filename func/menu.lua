@@ -10,8 +10,8 @@ local selectedColumn = 1
 local selectedRow = 6
 local lastMouseX
 local lastMouseY
-local lastMove = false
-local lastSelect = false
+local justMoved = false
+local justSelected = false
 local hasColumnTwo = false
 local numberOfSongs
 
@@ -51,8 +51,8 @@ function menu.update(delta)
 		love.event.quit(0)
 	end
 	local mouseX, mouseY = love.mouse.getPosition()
-	if love.mouse.isDown(1) or joystick.getActionButton() then
-		if not lastSelect then
+	if love.mouse.isDown(1) or joystick.getActionButton() or love.keyboard.isDown("return") then
+		if not justSelected then
 			row, column = getSelectedMenuOption(mouseX, mouseY)
 			if selectSong then
 				if row == 5 and column == 1 then
@@ -90,10 +90,10 @@ function menu.update(delta)
 					menuSong.setBpmMultiplier(difficulty)
 				end
 			end
-			lastSelect = true
+			justSelected = true
 		end
 	else
-		lastSelect = false
+		justSelected = false
 	end
 	if not lastMouseX and not lastMouseY then
 		lastMouseX = mouseX
@@ -104,71 +104,73 @@ function menu.update(delta)
 	else
 		local yAmount = math.abs(joystick.getVerticalAxis())
 		local xAmount = math.abs(joystick.getHorizontalAxis())
-		local pushed = yAmount > 0.9 or xAmount > 0.9
-		if not selectedRow and pushed then
+		local moving = yAmount > 0.9 or xAmount > 0.9 or love.keyboard.isDown("up") or love.keyboard.isDown("down") or love.keyboard.isDown("left") or love.keyboard.isDown("right")
+		if not selectedRow and moving then
 			selectedRow, selectedColumn = getSelectedMenuOption(mouseX, mouseY)
 		end
-		if lastMove and not pushed then
-			lastMove = false
-		elseif not lastMove and pushed then
-			if yAmount > 0.9 then
-				if joystick.getVerticalAxis() < 0 then
-					selectedRow = selectedRow - 1
-					if selectSong then
-						if selectedColumn == 1 then
-							if selectedRow < 7 then
-								selectedRow = 5
-							end
+		if justMoved and not moving then
+			justMoved = false
+		elseif not justMoved and moving then
+			if joystick.getVerticalAxis() < -0.9 or love.keyboard.isDown("up") then
+				selectedRow = selectedRow - 1
+				if selectSong then
+					if selectedColumn == 1 then
+						if selectedRow < 7 then
+							selectedRow = 5
 						end
-					else
-						if selectedRow < 6 then
-							selectedRow = 6
-						elseif selectedRow == 9 then
-							selectedRow = 8
-						end
-					end
-					if selectedRow < 1 then
-						selectedRow = 1
 					end
 				else
-					selectedRow = selectedRow + 1
-					if selectSong then
-						if selectedColumn == 1 then
-							if selectedRow > numberOfSongs + 6 then
-								selectedRow = numberOfSongs + 6
-							elseif selectedRow == 6 then
-								selectedRow = 7
-							end
-						end
-					else
-						if selectedRow > 12 then
-							selectedRow = 12
-						elseif selectedRow == 9 then
-							selectedRow = 10
-						end
+					if selectedRow < 6 then
+						selectedRow = 6
+					elseif selectedRow == 9 then
+						selectedRow = 8
 					end
-					if selectedRow > 20 then
-						selectedRow = 20
-					end
+				end
+				if selectedRow < 1 then
+					selectedRow = 1
 				end
 				if not hasColumnTwo then
 					selectedColumn = 1
 				end
-				lastMove = true
-			end
-			if xAmount > 0.9 then
-				if joystick:getHorizontalAxis() < 0 then
-					selectedColumn = selectedColumn - 1
-					if selectedColumn < 1 then
-						selectedColumn = 1
+				justMoved = true
+			elseif joystick.getVerticalAxis() > 0.9 or love.keyboard.isDown("down") then
+				selectedRow = selectedRow + 1
+				if selectSong then
+					if selectedColumn == 1 then
+						if selectedRow > numberOfSongs + 6 then
+							selectedRow = numberOfSongs + 6
+						elseif selectedRow == 6 then
+							selectedRow = 7
+						end
 					end
-				elseif hasColumnTwo then
-					selectedColumn = selectedColumn + 1
-					if selectedColumn > 2 then
-						selectedColumn = 2
+				else
+					if selectedRow > 12 then
+						selectedRow = 12
+					elseif selectedRow == 9 then
+						selectedRow = 10
 					end
 				end
-				lastMove = true
+				if selectedRow > 20 then
+					selectedRow = 20
+				end
+				if not hasColumnTwo then
+					selectedColumn = 1
+				end
+				justMoved = true
+			end
+
+			if joystick:getHorizontalAxis() < -0.9 or love.keyboard.isDown("left") then
+				selectedColumn = selectedColumn - 1
+				if selectedColumn < 1 then
+					selectedColumn = 1
+				end
+				justMoved = true
+			elseif hasColumnTwo and (joystick:getHorizontalAxis() > 0.9 or love.keyboard.isDown("right")) then
+				selectedColumn = selectedColumn + 1
+				if selectedColumn > 2 then
+					selectedColumn = 2
+				end
+				justMoved = true
 			end
 		end
 	end

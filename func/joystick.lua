@@ -15,14 +15,14 @@ function joystick.getHorizontalAxis()
 	if joystick.isPresent() then
 		return gamepad:getAxis(1)
 	else
-		return false
+		return 0
 	end
 end
 function joystick.getVerticalAxis()
 	if joystick.isPresent() then
 		return gamepad:getAxis(2)
 	else
-		return false
+		return 0
 	end
 end
 function joystick.getActionButton()
