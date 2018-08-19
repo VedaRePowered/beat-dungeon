@@ -23,6 +23,7 @@ function tiles.declareTiles()
 	tiles.declareObstacle("Green Slime", "slime1", "tiles/greenslime", false, true, 1)
 	tiles.declareObstacle("Blue Slime", "slime2", "tiles/blueslime", false, true, 1)
 	tiles.declareObstacle("Zom Bob", "zombie", "tiles/zombob", false, true, 1)
+	tiles.declareObstacle("Bomber Dude", "bomber", "tiles/bomberdude", false, true, 2)
 
 	tiles.declareProjectile("Tiger Balm's Bomb", "tigerbalmbomb", "tiles/tigerbalmbomb", false, false, 3)
 

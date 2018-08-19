@@ -102,6 +102,44 @@ function ai.update()
 			elseif string.sub(action, 1, 3) == "die" then
 				ais[aiTile.id] = nil
 				world.unset(aiTile.x, aiTile.y)
+			elseif string.sub(action, 1, 12) == "actAsABomber" then
+				local playerX, playerY = player.getPosition()
+				if costume == 2 then
+					dangerous = false
+					ais[aiTile.id] = nil
+					world.unset(aiTile.x, aiTile.y)
+				elseif math.sqrt(math.abs(playerX-aiTile.x)^2 + math.abs(playerX-aiTile.x)^2) < 25 then
+					dangerous = false
+					local playerDistanceX = playerX-aiTile.x
+					local playerDistanceY = playerY-aiTile.y
+					if math.abs(playerDistanceX) > math.abs(playerDistanceY) then
+						if playerDistanceX > 1 then
+							newRotation = 1
+						else
+							newRotation = 3
+						end
+					else
+						if playerDistanceY > 1 then
+							newRotation = 2
+						else
+							newRotation = 4
+						end
+					end
+					if math.floor(playerDistanceX) < 1 and math.floor(playerDistanceY) < 1 then
+						player.changeHealth(-2, tile.name)
+						newCostume = 2
+					else
+						if rotation == 1 then
+							newX = newX + 1
+						elseif rotation == 2 then
+							newY = newY + 1
+						elseif rotation == 3 then
+							newX = newX - 1
+						elseif rotation == 4 then
+							newY = newY - 1
+						end
+					end
+				end
 			else
 				error("Invalid AI action: " .. action)
 			end
