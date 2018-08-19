@@ -168,13 +168,26 @@ function player.draw()
 	end
 	if axeOut ~= 0 then
 		local rot = axeOut + math.pi * 1.75
+		local xOffset, yOffset = -8, -64
+		if playerDirection == "down" then
+			yOffset = 32
+			xOffset = -8
+		end
+		if playerDirection == "right" then
+			yOffset = -32
+			xOffset = 32
+		end
+		if playerDirection == "left" then
+			yOffset = -32
+			xOffset = -32
+		end
 		if playerDirection == "down" or playerDirection == "right" then
 			rot = rot + math.pi
 		end
 		if playerDirection == "left" or playerDirection == "right" then
 			rot = rot - math.pi/2
 		end
-		love.graphics.draw(axe, width / 2 - 16, height / 2 - 64, rot, 1, 1, 16, 32)
+		love.graphics.draw(axe, width / 2 + xOffset, height / 2 + yOffset, rot, 1, 1, 16, 32)
 	end
 
 	love.graphics.draw(playerImages[playerDirection][frame], width / 2 - playerWidth / 2, height / 2 - playerHeight * 1.5, 0, 2, 2)
@@ -213,6 +226,7 @@ function player.drawHUD()
 		love.graphics.rectangle("fill", 0, 0, width, height)
 		love.graphics.setColor(1, 1, 1, 1)
 	end
+	love.graphics.rectangle("fill", 1265-weaponCooldown*64, 689, weaponCooldown*64, 16)
 end
 function player.attack(weapon)
 	if weaponCooldown == 0 then
@@ -233,7 +247,7 @@ function player.attack(weapon)
 			end
 		elseif weapon == "axe" then
 			axeOut = math.pi / 2
-			weaponCooldown = 2.5
+			weaponCooldown = 2
 			for i = -1, 1 do
 				if math.random(1, 2) == 1 then
 					local xOffset, yOffset = 1, i
