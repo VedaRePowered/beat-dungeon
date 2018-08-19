@@ -12,6 +12,9 @@ function menu.update(delta)
 	if hasEnded then
 		menuSong.play()
 	end
+	if love.keyboard.isDown("escape") then
+		love.event.quit(0)
+	end
 	if love.mouse.isDown(1) then
 		local mouseX, mouseY = love.mouse.getPosition()
 		if selectSong then

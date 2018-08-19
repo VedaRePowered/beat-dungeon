@@ -124,6 +124,9 @@ function player.drawHUD()
 	end
 	local minuets = math.floor(song.getSongRemaining()/60)
 	local seconds = math.floor(song.getSongRemaining()%60)
+	if seconds < 10 then
+		seconds = "0" .. seconds
+	end
 	love.graphics.print(minuets .. ":" .. seconds, 15, 669)
 	if hurtCooldown > 0 then
 		love.graphics.setColor(231/256, 76/256, 60/256, hurtCooldown)

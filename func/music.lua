@@ -106,7 +106,7 @@ function scanForBpm(nrg, slowest, fastest, steps, samples, sampleRate)
 
 		-- Track the lowest value (best match)
 
-		if (total < height) then
+		if total < height then
 			trough = interval
 			height = total
 		end
@@ -144,7 +144,7 @@ function scanForOffset(nrg, beatsPerMinute, sampleRate)
 
 		-- Track the lowest value
 
-		if (total < height) then
+		if total < height then
 			trough = offsetSamples
 			height = total
 		end
@@ -180,7 +180,7 @@ function samplesToNrg(samples)
 		-- Maintain an energy meter (similar to PPM)
 
 		z = math.abs(z)
-		if (z > v) then
+		if z > v then
 			v = v + (z - v) / 8
 		else
 			v = v- (v - z) / 512

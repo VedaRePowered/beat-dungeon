@@ -1,13 +1,14 @@
 local beatsPassed = 0
 function love.load()
+	joystick	= require "func.joystick"
+	music		= require "func.music"
 	tiles		= require "func.tiles"
 	world		= require "func.world"
-	music		= require "func.music"
 	player		= require "func.player"
 	backgrounds	= require "func.backgrounds"
 	ai			= require "func.ai"
 	menu		= require "func.menu"
-	joystick	= require "func.joystick"
+	gameover	= require "func.gameover"
 
 	mode = "menu"
 
@@ -34,9 +35,7 @@ function love.update(delta)
 			mode = "end"
 		end
 	elseif mode == "end" then
-		if love.mouse.isDown(1) or joystick.getActionButton() then
-			mode = "menu"
-		end
+		gameover.update(delta)
 	end
 end
 
@@ -49,7 +48,6 @@ function love.draw()
 		player.drawHUD()
 		song.drawBorder()
 	elseif mode == "end" then
-		local score = player.getScore()
-		love.graphics.print("score: " .. score .. ",\n\n  click or press a to continue", 640, 300)
+		gameover.draw()
 	end
 end
