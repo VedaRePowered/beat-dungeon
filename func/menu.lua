@@ -6,6 +6,22 @@ menuSong.play()
 
 function menu.update(delta)
 	beatsPassed, hasEnded = menuSong.getBeatsPassed(delta)
+	if hasEnded then
+		menuSong.play()
+	end
+	if love.mouse.isDown(1) then
+		local mouseY = love.mouse.getY()
+		if mouseY > 150 and mouseY < 183 then
+			menuSong.stop()
+			song = music.loadSong("assets/music/bensound-house.mp3")
+			world.gen(16, song.getSongLength() * 4 + 32)
+			song.play()
+			mode = "game"
+		elseif mouseY > 183 and mouseY < 222 then
+		elseif mouseY > 222 and mouseY < 258 then
+			love.event.quit(0)
+		end
+	end
 end
 
 function menu.draw()

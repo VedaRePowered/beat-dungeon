@@ -18,10 +18,6 @@ end
 function love.update(delta)
 	if mode == "menu" then
 		menu.update(delta)
-		--song = music.loadSong("assets/music/bensound-house.mp3")
-		--world.gen(16, song.getSongLength() * 4 + 32)
-		--song.play()
-		--mode = "game"
 	elseif mode == "game" then
 		player.update(delta)
 		local hasEnded
