@@ -71,61 +71,61 @@ function player.update(delta)
 	local newPlayerX = playerX
 	local newPlayerY = playerY
 	local moved = false
-	if joystick.isPresent() then
-		local yAmount = math.abs(joystick.getVerticalAxis())
-		local xAmount = math.abs(joystick.getHorizontalAxis())
-		if yAmount > 0.1 then
-			moved = true
-			newPlayerY = playerY - joystick.getVerticalAxis() * delta * 4
-			if joystick.getVerticalAxis() < 0 then
-				playerDirection = "up"
-			else
-				playerDirection = "down"
-			end
-		end
-		if xAmount > 0.1 then
-			moved = true
-			newPlayerX = playerX + joystick:getHorizontalAxis() * delta * 4
-			if xAmount > yAmount then
-				if joystick:getHorizontalAxis() < 0 then
-					playerDirection = "left"
-				else
-					playerDirection = "right"
-				end
-			end
-		end
-		if joystick.getRightBumper() then
-			player.attack("axe")
-		end
-		if joystick.getLeftBumper() then
-			player.attack("dagger")
-		end
-	else
-		if love.keyboard.isDown("up") then
-			moved = true
-			newPlayerY = playerY + delta * 4
+
+	local yAmount = math.abs(joystick.getVerticalAxis())
+	local xAmount = math.abs(joystick.getHorizontalAxis())
+	if yAmount > 0.1 then
+		moved = true
+		newPlayerY = playerY - joystick.getVerticalAxis() * delta * 4
+		if joystick.getVerticalAxis() < 0 then
 			playerDirection = "up"
-		elseif love.keyboard.isDown("down") then
-			moved = true
-			newPlayerY = playerY - delta * 4
+		else
 			playerDirection = "down"
 		end
-		if love.keyboard.isDown("right") then
-			moved = true
-			newPlayerX = playerX + delta * 4
-			playerDirection = "right"
-		elseif love.keyboard.isDown("left") then
-			moved = true
-			newPlayerX = playerX - delta * 4
-			playerDirection = "left"
-		end
-		if love.keyboard.isDown("z") then
-			player.attack("axe")
-		end
-		if love.keyboard.isDown("x") then
-			player.attack("dagger")
+	end
+	if xAmount > 0.1 then
+		moved = true
+		newPlayerX = playerX + joystick:getHorizontalAxis() * delta * 4
+		if xAmount > yAmount then
+			if joystick:getHorizontalAxis() < 0 then
+				playerDirection = "left"
+			else
+				playerDirection = "right"
+			end
 		end
 	end
+	if joystick.getRightBumper() then
+		player.attack("axe")
+	end
+	if joystick.getLeftBumper() then
+		player.attack("dagger")
+	end
+
+	if love.keyboard.isDown("up") then
+		moved = true
+		newPlayerY = playerY + delta * 4
+		playerDirection = "up"
+	elseif love.keyboard.isDown("down") then
+		moved = true
+		newPlayerY = playerY - delta * 4
+		playerDirection = "down"
+	end
+	if love.keyboard.isDown("right") then
+		moved = true
+		newPlayerX = playerX + delta * 4
+		playerDirection = "right"
+	elseif love.keyboard.isDown("left") then
+		moved = true
+		newPlayerX = playerX - delta * 4
+		playerDirection = "left"
+	end
+	if love.keyboard.isDown("z") then
+		player.attack("axe")
+	end
+	if love.keyboard.isDown("x") then
+		player.attack("dagger")
+	end
+
 	if moved then
 		moveTime = moveTime + delta
 	else
