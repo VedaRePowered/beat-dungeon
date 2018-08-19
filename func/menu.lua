@@ -1,9 +1,10 @@
 local menu = {}
 local logo = love.graphics.newImage("assets/logo.png")
-local menuSong = music.loadSong("assets/music/Bensound - Summer.mp3")
+local menuSong = music.loadSong("assets/music/Bensound - Summer.mp3", 1)
 local menuFont = love.graphics.newFont("assets/fonts/pixelated.ttf", 36)
 local selectSong = false
 local selectedSong = "Bensound - House.mp3"
+local difficulty = 1
 menuSong.play()
 
 function menu.update(delta)
@@ -32,7 +33,7 @@ function menu.update(delta)
 		else
 			if mouseY > 150 and mouseY < 183 then
 				menuSong.stop()
-				song = music.loadSong("assets/music/" .. selectedSong)
+				song = music.loadSong("assets/music/" .. selectedSong, difficulty)
 				world.gen(16, song.getSongLength() * 4 + 32)
 				song.play()
 				mode = "game"
@@ -40,6 +41,12 @@ function menu.update(delta)
 				selectSong = true
 			elseif mouseY > 222 and mouseY < 258 then
 				love.event.quit(0)
+			elseif mouseY > 280 and mouseY < 316 then
+				difficulty = 0.5
+			elseif mouseY > 316 and mouseY < 352 then
+				difficulty = 1
+			elseif mouseY > 352 and mouseY < 388 then
+				difficulty = 2
 			end
 		end
 	end
@@ -77,6 +84,18 @@ function menu.draw()
 		love.graphics.print("Play", math.max(18-math.abs(mouseY-168), 0), 150)
 		love.graphics.print("Select Song (" .. string.sub(selectedSong, 1, string.len(selectedSong)-4) .. ")", math.max(18-math.abs(mouseY-204), 0), 186)
 		love.graphics.print("Exit", math.max(18-math.abs(mouseY-240), 0), 222)
+
+		local de, dn, dh = "", "", ""
+		if difficulty == 0.5 then
+			de = "*"
+		elseif difficulty == 1 then
+			dn = "*"
+		elseif difficulty == 2 then
+			dh = "*"
+		end
+		love.graphics.print("Easy" .. de, math.max(18-math.abs(mouseY-298), 0), 280)
+		love.graphics.print("Normal" .. dn, math.max(18-math.abs(mouseY-334), 0), 316)
+		love.graphics.print("Hard" .. dh, math.max(18-math.abs(mouseY-370), 0), 352)
 	end
 end
 

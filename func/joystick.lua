@@ -12,13 +12,25 @@ function joystick.isPresent()
 	end
 end
 function joystick.getHorizontalAxis()
-	return gamepad:getAxis(1)
+	if joystick.isPresent() then
+		return gamepad:getAxis(1)
+	else
+		return false
+	end
 end
 function joystick.getVerticalAxis()
-	return gamepad:getAxis(2)
+	if joystick.isPresent() then
+		return gamepad:getAxis(2)
+	else
+		return false
+	end
 end
 function joystick.getActionButton()
-	return gamepad:isDown(1, 2, 3, 4)
+	if joystick.isPresent() then
+		return gamepad:isDown(1, 2, 3, 4)
+	else
+		return false
+	end
 end
 
 return joystick

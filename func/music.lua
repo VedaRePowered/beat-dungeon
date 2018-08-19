@@ -282,13 +282,14 @@ end
 
 local music = {}
 
-function music.loadSong(songPath)
+function music.loadSong(songPath, bpmMultiplyer)
 	local songObject = {}
 
 	local songData = love.sound.newSoundData(songPath)
 	local duration = songData:getDuration()
 	local sampleRate = songData:getSampleRate()
 	local beatsPerMinute, offset = getBpmAndOffset(songData)
+	beatsPerMinute = beatsPerMinute * bpmMultiplyer
 	local secondsPerBeat = 60 / beatsPerMinute
 	local source = love.audio.newSource(songData)
 
