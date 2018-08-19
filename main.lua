@@ -43,6 +43,7 @@ function love.draw()
 	elseif mode == "game" then
 		backgrounds.draw("cobblestone")
 		world.draw()
+		song.drawBorder()
 	elseif mode == "end" then
 		local score = player.getScore()
 		love.graphics.print("score: " .. score, 640, 300)

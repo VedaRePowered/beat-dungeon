@@ -49,11 +49,9 @@ function menu.draw()
 	local mouseX, mouseY = love.mouse.getPosition()
 	love.graphics.setColor(1, 1, 1)
 	love.graphics.draw(logo, 0, 0)
-	if beatsPassed > 0 then
-		love.graphics.setColor(87890625, 0.9453125, 0.91796875)
-	else
-		love.graphics.setColor(0.3359375, 0.59375, 0.44140625)
-	end
+
+	local brightness = menuSong.getBrightness()
+	love.graphics.setColor((86 + ((225 - 86) * brightness)) / 256, (152 + ((242 - 152) * brightness)) / 256, (113 + ((235 - 113) * brightness)) / 256)
 	if selectSong then
 		local songs = love.filesystem.getDirectoryItems("assets/music")
 		love.graphics.print("Done", math.max(18-math.abs(mouseY-(132)), 0), 124)

@@ -48,9 +48,9 @@ end
 function player.draw()
 	local width, height = love.window.getMode()
 
-	love.graphics.setColor(255,0,0)
+	love.graphics.setColor(1, 0, 0)
 	love.graphics.rectangle("fill", width/2-playerWidth/2, height/2-playerHeight/2, playerWidth, playerHeight)
-	love.graphics.setColor(255,255,255)
+	love.graphics.setColor(1, 1, 1)
 
 	-- love.graphics.draw(tile.image, (x-pOffsetX)*32*2+width/2, 720-((y-pOffsetY)*32*2+height/2)-128, 0, 2, 2)
 end

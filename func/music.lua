@@ -266,37 +266,6 @@ function setSamples(songData, newSamples)
 end
 
 
---
--- Generates an array of beat timing positions in
--- seconds for a song.
---
-function getBeats(songData)
-	local duration = songData:getDuration()
-	local sampleRate = songData:getSampleRate()
-	local samples = getSamples(songData)
-	local lowPasSamples = lowPassFilter(samples, sampleRate, 300)
-	local beatsPerMinute, offset = computeBpmAndOffset(lowPasSamples, sampleRate)
-	local secondsPerBeat = 60 / beatsPerMinute
-
-	print("Duration is " .. duration)
-	print("Sample rate is " .. sampleRate)
-	print("BPM is " .. beatsPerMinute)
-	print("Seconds per beat: " .. secondsPerBeat)
-	print("Offset is " .. offset)
-
-	local nextBeat = offset
-
-	local beats = {}
-	while nextBeat < duration do
-		table.insert(beats, nextBeat)
-
-		nextBeat = nextBeat + secondsPerBeat
-	end
-
-	return beats
-end
-
-
 local music = {}
 
 function music.loadSong(songPath)
@@ -304,8 +273,18 @@ function music.loadSong(songPath)
 
 	local songData = love.sound.newSoundData(songPath)
 	local duration = songData:getDuration()
-	local beats = getBeats(songData)
+	local sampleRate = songData:getSampleRate()
+	local samples = getSamples(songData)
+	local lowPasSamples = lowPassFilter(samples, sampleRate, 300)
+	local beatsPerMinute, offset = computeBpmAndOffset(lowPasSamples, sampleRate)
+	local secondsPerBeat = 60 / beatsPerMinute
 	local source = love.audio.newSource(songData)
+
+	print("Duration is " .. duration)
+	print("Sample rate is " .. sampleRate)
+	print("BPM is " .. beatsPerMinute)
+	print("Seconds per beat is " .. secondsPerBeat)
+	print("Offset is " .. offset)
 
 	function songObject.play()
 		love.audio.play(source)
@@ -321,15 +300,19 @@ function music.loadSong(songPath)
 
 	local lastTime = 0
 	local nextBeat = 1
+	local lastBeatTime = 0
+	local nextBeatTime = offset
 
 	function songObject.getBeatsPassed(delta)
 		local beatCount = 0
 		local newTime = lastTime + delta
 		local hasEnded = newTime > duration
 
-		while nextBeat <= #beats and beats[nextBeat] < newTime do
+		while nextBeatTime < newTime do
 			beatCount = beatCount + 1
 			nextBeat = nextBeat + 1
+			lastBeatTime = nextBeatTime
+			nextBeatTime = lastBeatTime + secondsPerBeat
 		end
 
 		lastTime = newTime
@@ -339,6 +322,31 @@ function music.loadSong(songPath)
 
 	function songObject.getBeat()
 		return nextBeat - 1
+	end
+
+	function songObject.getBrightness()
+		local fraction = 1 - ((lastTime - lastBeatTime) / secondsPerBeat)
+
+		if fraction > 0.5 then
+			return (fraction - 0.5) * 2
+		else
+			return 0
+		end
+	end
+
+	function songObject.drawBorder()
+		local brightness = songObject.getBrightness()
+
+		if brightness > 0.5 then
+			local width, height = love.window.getMode()
+
+			for i = 0, 10 do
+				local lineBrightness = brightness * ((10 - i) / 10)
+				love.graphics.setColor(1, 1, 1, lineBrightness)
+				love.graphics.rectangle("line", i, i, width - (i * 2) - 1, height - (i * 2) - 1)
+			end
+			love.graphics.setColor(1, 1, 1)
+		end
 	end
 
 	return songObject
