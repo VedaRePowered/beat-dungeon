@@ -1,37 +1,27 @@
 local world = {}
 local worldTiles = {}
-local tileRotations = {}
 
 local heightInBlocks
 local widthInBlocks
 local tileSize, tileFactor = tiles.getTileSizeAndFactor()
 local tileFullSize = tileSize * tileFactor
 
-function world.getSize()
-	return widthInBlocks, heightInBlocks
-end
 function world.get(x, y)
-	local rotation
-	if tileRotations[y] then
-		rotation = tileRotations[y][x]
-	end
-	if worldTiles[y] then
-		return tiles.get(worldTiles[y][x]), rotation
+	if worldTiles[y] and worldTiles[y][x] then
+		local worldTile = worldTiles[y][x]
+		return tiles.get(worldTile.tileId), worldTile.rotation
 	else
 		return false
 	end
 end
-function world.set(x, y, tile, rotation)
+function world.set(x, y, tileId, rotation)
 	if not worldTiles[y] then
 		worldTiles[y] = {}
 	end
-	worldTiles[y][x] = tile
-	if rotation then
-		if not tileRotations[y] then
-			tileRotations[y] = {}
-		end
-		tileRotations[y][x] = rotation
-	end
+	worldTiles[y][x] = {
+		tileId=tileId,
+		rotation = rotation
+	}
 end
 function world.unset(x, y)
 	if worldTiles[y] then
