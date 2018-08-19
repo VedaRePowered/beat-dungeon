@@ -8,6 +8,13 @@ local health = 4
 local moveTime = 0
 local hurtCooldown = 0
 local lastHit
+local weaponCooldown = 1
+local weaponPhase = 0
+
+local axe = tiles.loadImage("assets/tools/axe1.png")
+local dagger = tiles.loadImage("assets/tools/dagger.png")
+local axeOut = 0
+local daggerOut = 0
 
 local playerDirection = "up"
 local playerImages = {
@@ -49,6 +56,18 @@ function player.update(delta)
 	if hurtCooldown < 0 then
 		hurtCooldown = 0
 	end
+	weaponCooldown = weaponCooldown - delta * 1
+	if weaponCooldown < 0 then
+		weaponCooldown = 0
+	end
+	axeOut = axeOut - delta * 5
+	if axeOut < 0 then
+		axeOut = 0
+	end
+	daggerOut = daggerOut - delta * 5
+	if daggerOut < 0 then
+		daggerOut = 0
+	end
 	local newPlayerX = playerX
 	local newPlayerY = playerY
 	local moved = false
@@ -75,6 +94,12 @@ function player.update(delta)
 				end
 			end
 		end
+		if joystick.getRightBumper() then
+			player.attack("axe")
+		end
+		if joystick.getLeftBumper() then
+			player.attack("dagger")
+		end
 	else
 		if love.keyboard.isDown("up") then
 			moved = true
@@ -94,6 +119,12 @@ function player.update(delta)
 			newPlayerX = playerX - delta * 4
 			playerDirection = "left"
 		end
+		if love.keyboard.isDown("z") then
+			player.attack("axe")
+		end
+		if love.keyboard.isDown("x") then
+			player.attack("dagger")
+		end
 	end
 	if moved then
 		moveTime = moveTime + delta
@@ -108,12 +139,28 @@ function player.draw()
 	local width, height = love.window.getMode()
 	local frame = math.floor(moveTime / 0.2) % 2 + 1
 
+	if daggerOut ~= 0 then
+		local xDagger, yDagger, rot = 0, 0, 0
+		yDagger = math.abs(daggerOut-0.5)*32
+		if playerDirection == "down" or playerDirection == "right" then
+			yDagger = yDagger * -1
+			rot = math.pi
+		end
+		if playerDirection == "left" or playerDirection == "right" then
+			xDagger = yDagger
+			yDagger = 0
+			rot = rot - math.pi/2
+		end
+		love.graphics.draw(dagger,  width / 2 - 16 + xDagger, height / 2 - 96 + yDagger, rot, 2, 2)
+	end
+
 	love.graphics.draw(playerImages[playerDirection][frame], width / 2 - playerWidth / 2, height / 2 - playerHeight * 1.5, 0, 2, 2)
 end
 function player.changeHealth(by, damageSource)
 	health = health + by
 	hurtCooldown = 1
 	lastHit = damageSource
+	joystick.vibrate(0.5)
 	if health < 1 then
 		mode = "end"
 		song.stop()
@@ -142,6 +189,42 @@ function player.drawHUD()
 		love.graphics.setColor(231/256, 76/256, 60/256, hurtCooldown)
 		love.graphics.rectangle("fill", 0, 0, width, height)
 		love.graphics.setColor(1, 1, 1, 1)
+	end
+end
+function player.attack(weapon)
+	if weaponCooldown == 0 then
+		local damage, areaOfEffect = 0, 0
+		if weapon == "dagger" then
+			daggerOut = 1
+			weaponCooldown = 0.5
+			if math.random(1, 5) == 1 then
+				local xOffset, yOffset = 1, 0
+				if playerDirection == "left" or playerDirection == "down" then
+					xOffset = xOffset * -1
+				end
+				if playerDirection == "up" or playerDirection == "down" then
+					yOffset = xOffset
+					xOffset = 0
+				end
+				world.unset(math.floor(playerX+xOffset), math.floor(playerY+yOffset))
+			end
+		elseif weapon == "axe" then
+			axeOut = math.pi*2
+			weaponCooldown = 2
+			for i = 1, 3 do
+				if math.random(1, 5) == 1 then
+					local xOffset, yOffset = 1, 0
+					if playerDirection == "left" or playerDirection == "down" then
+						xOffset = xOffset * -1
+					end
+					if playerDirection == "up" or playerDirection == "down" then
+						yOffset = xOffset
+						xOffset = 0
+					end
+					world.unset(math.floor(playerX+xOffset), math.floor(playerY+yOffset))
+				end
+			end
+		end
 	end
 end
 return player

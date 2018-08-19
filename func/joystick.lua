@@ -32,5 +32,23 @@ function joystick.getActionButton()
 		return false
 	end
 end
-
+function joystick.getRightBumper()
+	if joystick.isPresent() then
+		return gamepad:isDown(6)
+	else
+		return false
+	end
+end
+function joystick.getLeftBumper()
+	if joystick.isPresent() then
+		return gamepad:isDown(5)
+	else
+		return false
+	end
+end
+function joystick.vibrate(time)
+	if joystick.isPresent() then
+		gamepad:setVibration(1, 1, time)
+	end
+end
 return joystick
