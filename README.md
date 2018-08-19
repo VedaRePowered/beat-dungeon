@@ -1,4 +1,4 @@
-# Beat Dungeon
+![Beat Dungeon Logo](https://raw.githubusercontent.com/BEN1JEN/beat-dungeon/master/assets/logo.png)
 
 Try to survive a dungeon where the monsters move to the beat.
 
