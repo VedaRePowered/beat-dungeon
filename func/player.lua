@@ -5,9 +5,9 @@ local playerWidth = 64
 local playerHeight = 64
 local heart = love.graphics.newImage("assets/heart.png")
 heart:setFilter("nearest")
-local health = 8
-local joystick
+local health = 4
 local moveTime = 0
+local hurtCooldown = 0
 
 local playerDirection = "up"
 local playerImages = {
@@ -29,9 +29,6 @@ local playerImages = {
 	}
 }
 
-function player.initializeJoystick()
-	joystick = love.joystick.getJoysticks()[1]
-end
 function player.getPosition()
 	return playerX, playerY
 end
@@ -45,16 +42,17 @@ function player.resetPosition(width)
 	return player.getPosition()
 end
 function player.update(delta)
+	hurtCooldown = hurtCooldown - delta
 	local newPlayerX = playerX
 	local newPlayerY = playerY
 	local moved = false
-	if joystick then
-		local yAmount = math.abs(joystick:getAxis(2))
-		local xAmount = math.abs(joystick:getAxis(1))
+	if joystick.isPresent() then
+		local yAmount = math.abs(joystick.getVerticalAxis())
+		local xAmount = math.abs(joystick.getHorizontalAxis())
 		if yAmount > 0.1 then
 			moved = true
-			newPlayerY = playerY - joystick:getAxis(2) * delta * 4
-			if joystick:getAxis(2) < 0 then
+			newPlayerY = playerY - joystick.getVerticalAxis() * delta * 4
+			if joystick.getVerticalAxis() < 0 then
 				playerDirection = "up"
 			else
 				playerDirection = "down"
@@ -62,9 +60,9 @@ function player.update(delta)
 		end
 		if xAmount > 0.1 then
 			moved = true
-			newPlayerX = playerX + joystick:getAxis(1) * delta * 4
+			newPlayerX = playerX + joystick:getHorizontalAxis() * delta * 4
 			if xAmount > yAmount then
-				if joystick:getAxis(1) < 0 then
+				if joystick:getHorizontalAxis() < 0 then
 					playerDirection = "left"
 				else
 					playerDirection = "right"

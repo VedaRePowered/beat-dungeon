@@ -7,11 +7,12 @@ function love.load()
 	backgrounds	= require "func.backgrounds"
 	ai			= require "func.ai"
 	menu		= require "func.menu"
+	joystick	= require "func.joystick"
 
 	mode = "menu"
 
 	tiles.declareTiles()
-	player.initializeJoystick()
+	joystick.initialize()
 
 end
 
@@ -33,7 +34,9 @@ function love.update(delta)
 			mode = "end"
 		end
 	elseif mode == "end" then
-
+		if love.mouse.isDown(1) or joystick.getActionButton() then
+			mode = "menu"
+		end
 	end
 end
 
@@ -47,6 +50,6 @@ function love.draw()
 		song.drawBorder()
 	elseif mode == "end" then
 		local score = player.getScore()
-		love.graphics.print("score: " .. score, 640, 300)
+		love.graphics.print("score: " .. score .. ",\n\n  click or press a to continue", 640, 300)
 	end
 end
