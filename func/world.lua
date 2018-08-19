@@ -33,6 +33,7 @@ function world.gen(width, height)
 	heightInBlocks = height
 
 	playerX, playerY = player.resetPosition(width)
+	ai.reset()
 
 	worldTiles = {}
 	for y = 1, height do

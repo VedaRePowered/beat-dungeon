@@ -288,8 +288,8 @@ function music.loadSong(songPath, bpmMultiplyer)
 	local songData = love.sound.newSoundData(songPath)
 	local duration = songData:getDuration()
 	local sampleRate = songData:getSampleRate()
-	local beatsPerMinute, offset = getBpmAndOffset(songData)
-	beatsPerMinute = beatsPerMinute * bpmMultiplyer
+	local originalBeatsPerMinute, offset = getBpmAndOffset(songData)
+	local beatsPerMinute = originalBeatsPerMinute * bpmMultiplyer
 	local secondsPerBeat = 60 / beatsPerMinute
 	local source = love.audio.newSource(songData)
 
@@ -300,29 +300,37 @@ function music.loadSong(songPath, bpmMultiplyer)
 	print("Offset is " .. offset)
 
 	function songObject.play()
-		love.audio.play(source)
+		source:play()
+	end
+
+	function songObject.isPlaying()
+		return source:isPlaying()
 	end
 
 	function songObject.stop()
-		love.audio.stop(source)
+		source:stop()
 	end
 
-	local lastTime = 0
 	local nextBeat = 1
-	local lastBeatTime = 0
-	local nextBeatTime = offset
+	local lastBeatTime = offset
+
+	function songObject.setBpmMultiplier(newBpmMultiplier)
+		beatsPerMinute = originalBeatsPerMinute * newBpmMultiplier
+		secondsPerBeat = 60 / beatsPerMinute
+	end
 
 	function songObject.getSongLength()
 		return duration
 	end
 
 	function songObject.getSongRemaining()
-		return duration - lastTime
+		return duration - source:tell("seconds")
 	end
 
-	function songObject.getBeatsPassed(delta)
+	function songObject.getBeatsPassed()
 		local beatCount = 0
-		local newTime = lastTime + delta
+		local nextBeatTime = lastBeatTime + secondsPerBeat
+		local newTime = source:tell("seconds")
 		local hasEnded = newTime > duration
 
 		while nextBeatTime < newTime do
@@ -332,9 +340,7 @@ function music.loadSong(songPath, bpmMultiplyer)
 			nextBeatTime = lastBeatTime + secondsPerBeat
 		end
 
-		lastTime = newTime
-
-		return beatCount, hasEnded
+		return beatCount, not songObject.isPlaying()
 	end
 
 	function songObject.getBeat()
@@ -342,7 +348,7 @@ function music.loadSong(songPath, bpmMultiplyer)
 	end
 
 	function songObject.getBrightness()
-		local fraction = 1 - ((lastTime - lastBeatTime) / secondsPerBeat)
+		local fraction = 1 - ((source:tell("seconds") - lastBeatTime) / secondsPerBeat)
 
 		if fraction > 0.5 then
 			return (fraction - 0.5) * 2

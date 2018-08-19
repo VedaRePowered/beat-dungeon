@@ -1,11 +1,14 @@
 ai = {}
 ais = {}
+function ai.reset()
+	ais = {}
+end
 function ai.new(x, y, pattern)
-	ais[#ais+1] = {x=x, y=y, pattern=pattern}
+	ais[#ais+1] = {x=x, y=y, pattern=pattern, start=math.random(1, #pattern)}
 end
 function ai.update()
 	for _, tile in ipairs(ais) do
-		local action = tile.pattern[song.getBeat() % #tile.pattern + 1]
+		local action = tile.pattern[(song.getBeat() + tile.start) % #tile.pattern + 1]
 		if string.sub(action, 1, 4) == "move" then
 			local type, rotation = world.get(tile.x, tile.y)
 			local newX, newY = tile.x, tile.y

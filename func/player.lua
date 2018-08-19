@@ -37,6 +37,8 @@ end
 function player.resetPosition(width)
 	playerX = (width / 2) + 1
 	playerY = 32
+	health = 4
+	hurtCooldown = 0
 
 	return player.getPosition()
 end

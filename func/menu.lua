@@ -43,10 +43,13 @@ function menu.update(delta)
 				love.event.quit(0)
 			elseif mouseY > 280 and mouseY < 316 then
 				difficulty = 0.5
+				menuSong.setBpmMultiplier(difficulty)
 			elseif mouseY > 316 and mouseY < 352 then
 				difficulty = 1
+				menuSong.setBpmMultiplier(difficulty)
 			elseif mouseY > 352 and mouseY < 388 then
 				difficulty = 2
+				menuSong.setBpmMultiplier(difficulty)
 			end
 		end
 	end

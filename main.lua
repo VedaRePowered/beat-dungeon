@@ -23,7 +23,7 @@ function love.update(delta)
 		player.update(delta)
 		local hasEnded
 
-		beatsPassed, hasEnded = song.getBeatsPassed(delta)
+		beatsPassed, hasEnded = song.getBeatsPassed()
 		if beatsPassed > 0 then
 			for bn = 1, beatsPassed do
 				ai.update()
