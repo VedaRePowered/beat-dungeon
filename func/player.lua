@@ -1,6 +1,6 @@
 local player = {}
-local playerX = 8
-local playerY = 32
+local playerX
+local playerY
 local playerWidth = 32
 local playerHeight = 32
 local joystick
@@ -9,6 +9,15 @@ function player.initializeJoystick()
 end
 function player.getPosition()
 	return playerX, playerY
+end
+function player.getScore()
+	return math.floor(playerY - 32)
+end
+function player.resetPosition(width)
+	playerX = (width / 2) + 1
+	playerY = 32
+
+	return player.getPosition()
 end
 function player.update(delta)
 	local newPlayerX = playerX

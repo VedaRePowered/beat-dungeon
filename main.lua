@@ -35,8 +35,6 @@ function love.update(delta)
 	elseif mode == "end" then
 
 	end
-	local _, playerX = player.getPosition()
-	score = math.floor(playerX - 32)
 end
 
 function love.draw()
@@ -46,6 +44,7 @@ function love.draw()
 		backgrounds.draw("cobblestone")
 		world.draw()
 	elseif mode == "end" then
+		local score = player.getScore()
 		love.graphics.print("score: " .. score, 640, 300)
 	end
 end
