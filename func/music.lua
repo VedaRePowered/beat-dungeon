@@ -306,14 +306,18 @@ function music.loadSong(songPath)
 		love.audio.stop(source)
 	end
 
-	function songObject.getSongLength()
-		return duration
-	end
-
 	local lastTime = 0
 	local nextBeat = 1
 	local lastBeatTime = 0
 	local nextBeatTime = offset
+
+	function songObject.getSongLength()
+		return duration
+	end
+
+	function songObject.getSongRemaining()
+		return duration - lastTime
+	end
 
 	function songObject.getBeatsPassed(delta)
 		local beatCount = 0
