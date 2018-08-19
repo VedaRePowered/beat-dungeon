@@ -121,6 +121,9 @@ function player.drawHUD()
 	for i = 1, health do
 		love.graphics.draw(heart, 1280-20*i-15, 15, 0, 2, 2)
 	end
+	local minuets = math.floor(song.getSongRemaining()/60)
+	local seconds = math.floor(song.getSongRemaining()%60)
+	love.graphics.print(minuets .. ":" .. seconds, 15, 669)
 	if hurtCooldown > 0 then
 		love.graphics.setColor(231/256, 76/256, 60/256, hurtCooldown)
 		love.graphics.rectangle("fill", 0, 0, width, height)

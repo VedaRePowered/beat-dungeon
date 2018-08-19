@@ -41,7 +41,7 @@ function world.gen(width, height)
 
 		for x = 1, width do
 			local nearPlayer = math.abs(x - playerX) < 4 and math.abs(y - playerY) < 4
-			if not nearPlayer and math.random(1, 15) == 1 then
+			if not nearPlayer and math.random(1, 10) == 1 then
 				local tile = tiles.random()
 				world.set(x, y, tile, 1)
 				if tiles.get(tile).pattern then
