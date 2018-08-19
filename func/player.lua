@@ -153,6 +153,16 @@ function player.draw()
 		end
 		love.graphics.draw(dagger,  width / 2 - 16 + xDagger, height / 2 - 96 + yDagger, rot, 2, 2)
 	end
+	if axeOut ~= 0 then
+		local rot = axeOut + math.pi * 1.75
+		if playerDirection == "down" or playerDirection == "right" then
+			rot = rot + math.pi
+		end
+		if playerDirection == "left" or playerDirection == "right" then
+			rot = rot - math.pi/2
+		end
+		love.graphics.draw(axe, width / 2 - 16, height / 2 - 64, rot, 1, 1, 16, 32)
+	end
 
 	love.graphics.draw(playerImages[playerDirection][frame], width / 2 - playerWidth / 2, height / 2 - playerHeight * 1.5, 0, 2, 2)
 end
@@ -209,17 +219,19 @@ function player.attack(weapon)
 				world.unset(math.floor(playerX+xOffset), math.floor(playerY+yOffset))
 			end
 		elseif weapon == "axe" then
-			axeOut = math.pi*2
-			weaponCooldown = 2
-			for i = 1, 3 do
-				if math.random(1, 5) == 1 then
-					local xOffset, yOffset = 1, 0
+			axeOut = math.pi / 2
+			weaponCooldown = 2.5
+			for i = -1, 1 do
+				if math.random(1, 2) == 1 then
+					local xOffset, yOffset = 1, i
 					if playerDirection == "left" or playerDirection == "down" then
 						xOffset = xOffset * -1
+						yOffset = yOffset * -1
 					end
 					if playerDirection == "up" or playerDirection == "down" then
+						local tmp = yOffset
 						yOffset = xOffset
-						xOffset = 0
+						xOffset = tmp
 					end
 					world.unset(math.floor(playerX+xOffset), math.floor(playerY+yOffset))
 				end
