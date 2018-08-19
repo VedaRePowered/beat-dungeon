@@ -276,7 +276,9 @@ function music.loadSong(songPath)
 	local sampleRate = songData:getSampleRate()
 	local samples = getSamples(songData)
 	local lowPasSamples = lowPassFilter(samples, sampleRate, 300)
+	samples = nil
 	local beatsPerMinute, offset = computeBpmAndOffset(lowPasSamples, sampleRate)
+	lowPasSamples = nil
 	local secondsPerBeat = 60 / beatsPerMinute
 	local source = love.audio.newSource(songData)
 
@@ -337,7 +339,7 @@ function music.loadSong(songPath)
 	function songObject.drawBorder()
 		local brightness = songObject.getBrightness()
 
-		if brightness > 0.5 then
+		if brightness > 0 then
 			local width, height = love.window.getMode()
 
 			for i = 0, 10 do
