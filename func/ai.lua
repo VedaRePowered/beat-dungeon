@@ -74,8 +74,7 @@ function ai.update()
 		end
 		local playerX, playerY = player.getPosition()
 		if tile.x == math.floor(playerX) and tile.y == math.floor(playerY) then
-			mode = "end"
-			song.stop()
+			player.changeHealth(-1)
 		end
 	end
 end

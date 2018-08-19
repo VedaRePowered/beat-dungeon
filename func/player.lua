@@ -3,6 +3,9 @@ local playerX
 local playerY
 local playerWidth = 64
 local playerHeight = 64
+local heart = love.graphics.newImage("assets/heart.png")
+heart:setFilter("nearest")
+local health = 8
 local joystick
 local moveTime = 0
 
@@ -102,5 +105,18 @@ function player.draw()
 	local frame = math.floor(moveTime / 0.2) % 2 + 1
 
 	love.graphics.draw(playerImages[playerDirection][frame], width / 2 - 16, height / 2 - playerHeight + 16)
+end
+function player.changeHealth(by)
+	health = health + by
+	if health < 1 then
+		mode = "end"
+		song.stop()
+	end
+end
+function player.drawHUD()
+	love.graphics.print("Score: " .. math.floor(playerY - 32), 15, 10)
+	for i = 1, health do
+		love.graphics.draw(heart, 1280-20*i-15, 15, 0, 2, 2)
+	end
 end
 return player
