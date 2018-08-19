@@ -7,6 +7,7 @@ local heart = tiles.loadImage("assets/heart.png")
 local health = 4
 local moveTime = 0
 local hurtCooldown = 0
+local lastHit
 
 local playerDirection = "up"
 local playerImages = {
@@ -38,6 +39,7 @@ function player.resetPosition(width)
 	playerX = (width / 2) + 1
 	playerY = 32
 	health = 4
+	lastHit = nil
 	hurtCooldown = 0
 
 	return player.getPosition()
@@ -108,12 +110,20 @@ function player.draw()
 
 	love.graphics.draw(playerImages[playerDirection][frame], width / 2 - playerWidth / 2, height / 2 - playerHeight * 1.5, 0, 2, 2)
 end
-function player.changeHealth(by)
+function player.changeHealth(by, damageSource)
 	health = health + by
 	hurtCooldown = 1
+	lastHit = damageSource
 	if health < 1 then
 		mode = "end"
 		song.stop()
+	end
+end
+function player.getEndReason()
+	if health > 0 then
+		return "Ran out of time!"
+	else
+		return "Killed by " .. lastHit
 	end
 end
 function player.drawHUD()

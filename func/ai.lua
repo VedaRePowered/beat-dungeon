@@ -117,7 +117,7 @@ function ai.update()
 
 		local playerX, playerY = player.getPosition()
 		if dangerous and aiTile.x == math.floor(playerX) and aiTile.y == math.floor(playerY) then
-			player.changeHealth(-1)
+			player.changeHealth(-1, tile.name)
 		end
 	end
 end

@@ -8,6 +8,7 @@ end
 
 function gameover.draw()
 	local score = player.getScore()
+	love.graphics.print(player.getEndReason(), 450, 200)
 	love.graphics.print("Score: " .. score, 450, 300)
 	love.graphics.print("Click the mouse, press a button\n or press space or enter...", 450, 350)
 end
