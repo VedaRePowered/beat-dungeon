@@ -6,19 +6,23 @@ function love.load()
 	player		= require "func.player"
 	backgrounds	= require "func.backgrounds"
 	ai			= require "func.ai"
+	menu		= require "func.menu"
 
-	mode = "game"
+	mode = "menu"
 
 	tiles.declareTiles()
 	player.initializeJoystick()
 
-	song = music.loadSong("assets/music/bensound-house.mp3")
-	world.gen(16, song.getSongLength() * 4 + 32)
-	song.play()
 end
 
 function love.update(delta)
-	if mode == "game" then
+	if mode == "menu" then
+		menu.update(delta)
+		--song = music.loadSong("assets/music/bensound-house.mp3")
+		--world.gen(16, song.getSongLength() * 4 + 32)
+		--song.play()
+		--mode = "game"
+	elseif mode == "game" then
 		player.update(delta)
 		local hasEnded
 
@@ -40,7 +44,9 @@ function love.update(delta)
 end
 
 function love.draw()
-	if mode == "game" then
+	if mode == "menu" then
+		menu.draw()
+	elseif mode == "game" then
 		backgrounds.draw("cobblestone")
 		world.draw()
 	elseif mode == "end" then
