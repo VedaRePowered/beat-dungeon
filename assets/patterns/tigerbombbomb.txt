@@ -1,0 +1,6 @@
+wait
+move
+move
+costume2
+boom
+die

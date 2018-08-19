@@ -1,14 +1,28 @@
 ai = {}
-ais = {}
+local ais = {}
+local nextId = 1
 function ai.reset()
 	ais = {}
 end
-function ai.new(x, y, pattern)
-	ais[#ais+1] = {x=x, y=y, pattern=pattern, start=math.random(1, #pattern)}
+function ai.new(x, y, pattern, start)
+	if not start then
+		start = math.random(1, #pattern)
+	end
+	ais[nextId] = {
+		id=nextId,
+		x=x,
+		y=y,
+		pattern=pattern,
+		start=start
+	}
+	nextId = nextId + 1
+end
+function updateTile(aiTile, isProjectile)
 end
 function ai.update()
-	for _, aiTile in ipairs(ais) do
-		local action = aiTile.pattern[(song.getBeat() + aiTile.start) % #aiTile.pattern + 1]
+	local songBeat = song.getBeat()
+	for _, aiTile in pairs(ais) do
+		local action = aiTile.pattern[(songBeat + aiTile.start) % #aiTile.pattern + 1]
 		local tile, rotation, costume = world.get(aiTile.x, aiTile.y)
 		local newX = aiTile.x
 		local newY = aiTile.y
@@ -55,11 +69,35 @@ function ai.update()
 			newCostume = 2
 		elseif string.sub(action, 1, 8) == "costume3" then
 			newCostume = 3
+		elseif string.sub(action, 1, 8) == "costume4" then
+			newCostume = 4
 		elseif string.sub(action, 1, 5) == "spike" then
 			newCostume = 3
 			dangerous = true
 		elseif string.sub(action, 1, 4) == "kill" then
 			dangerous = true
+		elseif string.sub(action, 1, 9) == "throwbomb" then
+			newCostume = 4
+			local bombtile = tiles.getTileByName("Tiger Bomb's Bomb")
+			if not world.get(aiTile.x - 1, aiTile.y) then
+				world.set(aiTile.x - 1, aiTile.y, bombtile.id, 3, 1)
+				ai.new(aiTile.x - 1, aiTile.y, bombtile.pattern, -songBeat)
+			elseif not world.get(aiTile.x, aiTile.y - 1) then
+				world.set(aiTile.x, aiTile.y - 1, bombtile.id, 4, 1)
+				ai.new(aiTile.x, aiTile.y - 1, bombtile.pattern, -songBeat)
+			elseif not world.get(aiTile.x + 1, aiTile.y) then
+				world.set(aiTile.x + 1, aiTile.y, bombtile.id, 1, 1)
+				ai.new(aiTile.x + 1, aiTile.y, bombtile.pattern, -songBeat)
+			elseif not world.get(aiTile.x, aiTile.y + 1) then
+				world.set(aiTile.x, aiTile.y + 1, bombtile.id, 2, 1)
+				ai.new(aiTile.x, aiTile.y + 1, bombtile.pattern, -songBeat)
+			end
+		elseif string.sub(action, 1, 4) == "boom" then
+			newCostume = 3
+			dangerous = true
+		elseif string.sub(action, 1, 3) == "die" then
+			ais[aiTile.id] = nil
+			world.unset(aiTile.x, aiTile.y)
 		else
 			error("Invalid AI action: " .. action)
 		end

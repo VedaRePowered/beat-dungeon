@@ -2,7 +2,7 @@ local tiles = {}
 local tileList = {}
 local leftWallsList = {}
 local rightWallsList = {}
-local nonWallList = {}
+local obstacleList = {}
 
 local tileSize = 32
 local tileFactor = 2
@@ -14,13 +14,17 @@ function tiles.loadImage(path)
 end
 
 function tiles.declareTiles()
-	tiles.declare("pillar", false, "tiles/pillar", false, false, 1)
-	tiles.declare("spikes", "spikes", "tiles/spikes", true, false, 3)
-	tiles.declare("pit", "pit", "tiles/pit", true, false, 1)
-	tiles.declare("skele bones", "skeleton", "tiles/skelebones", false, true, 1)
-	tiles.declare("green slime", "slime1", "tiles/greenslime", false, true, 1)
-	tiles.declare("blue slime", "slime2", "tiles/blueslime", false, true, 1)
-	tiles.declare("zom bob", "zombie", "tiles/zombob", false, true, 1)
+	tiles.declareObstacle("Pillar", false, "tiles/pillar", false, false, 1)
+	tiles.declareObstacle("Pit", "pit", "tiles/pit", true, false, 1)
+	tiles.declareObstacle("Spikes", "spikes", "tiles/spikes", true, false, 3)
+
+	tiles.declareObstacle("Tiger Bomb", "tigerbomb", "tiles/tigerbomb", false, false, 4)
+	tiles.declareObstacle("Skele Bones", "skeleton", "tiles/skelebones", false, true, 1)
+	tiles.declareObstacle("Green Slime", "slime1", "tiles/greenslime", false, true, 1)
+	tiles.declareObstacle("Blue Slime", "slime2", "tiles/blueslime", false, true, 1)
+	tiles.declareObstacle("Zom Bob", "zombie", "tiles/zombob", false, true, 1)
+
+	tiles.declareProjectile("Tiger Bomb's Bomb", "tigerbombbomb", "tiles/tigerbombbomb", false, false, 3)
 
 	tiles.declareWall("left", "tiles/wall-left1")
 	tiles.declareWall("left", "tiles/wall-left2")
@@ -35,6 +39,9 @@ end
 function createTile(id, name, patternFile, image, underPlayer, rotatable, costumes)
 	if patternFile then
 		p = io.open("assets/patterns/" .. patternFile .. ".txt")
+		if not p then
+			error("Could not find pattern: " .. patternFile)
+		end
 		pattern = {}
 		for action in p:lines() do
 			table.insert(pattern, action)
@@ -67,14 +74,20 @@ function createTile(id, name, patternFile, image, underPlayer, rotatable, costum
 		pattern=pattern,
 		images=images,
 		underPlayer=underPlayer,
-		costumes=costumes
+		costumes=costumes,
+		rotatable=rotatable
 	}
 end
-function tiles.declare(name, patternFile, image, underPlayer, rotatable, costumes)
+function tiles.declareObstacle(name, patternFile, image, underPlayer, rotatable, costumes)
 	id = #tileList + 1
 	local newTile = createTile(id, name, patternFile, image, underPlayer, rotatable, costumes)
 	tileList[id] = newTile
-	table.insert(nonWallList, newTile)
+	table.insert(obstacleList, newTile)
+end
+function tiles.declareProjectile(name, patternFile, image, underPlayer, rotatable, costumes)
+	id = #tileList + 1
+	local newTile = createTile(id, name, patternFile, image, underPlayer, rotatable, costumes)
+	tileList[id] = newTile
 end
 function tiles.declareWall(type, image)
 	local wallList
@@ -95,7 +108,7 @@ function tiles.getTileSizeAndFactor()
 	return tileSize, tileFactor
 end
 function tiles.random()
-	return nonWallList[math.random(1, #nonWallList)].id
+	return obstacleList[math.random(1, #obstacleList)].id
 end
 function tiles.randomWall(type)
 	if type == "left" then
@@ -109,6 +122,13 @@ end
 
 function tiles.get(id)
 	return tileList[id]
+end
+function tiles.getTileByName(name)
+	for _, tile in pairs(tileList) do
+		if tile.name == name then
+			return tile
+		end
+	end
 end
 function tiles.getImage(id, rotation, costume)
 	local index = (costume - 1) * 4 + rotation

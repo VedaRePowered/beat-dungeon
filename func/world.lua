@@ -44,13 +44,21 @@ function world.gen(width, height)
 		for x = 1, width do
 			local nearPlayer = math.abs(x - playerX) < 4 and math.abs(y - playerY) < 4
 			if not nearPlayer and math.random(1, 10) == 1 then
-				local tile = tiles.random()
-				world.set(x, y, tile, 1, 1)
-				if tiles.get(tile).pattern then
-					ai.new(x, y, tiles.get(tile).pattern)
+				local tileId = tiles.random()
+				local tile = tiles.get(tileId)
+				local roation = 1
+				if tile.rotatable then
+					rotation = math.random(1, 4)
 				end
+				world.add(x, y, tile, rotation, 1)
 			end
 		end
+	end
+end
+function world.add(x, y, tile, rotation, costume)
+	world.set(x, y, tile.id, rotation, costume)
+	if tile.pattern then
+		ai.new(x, y, tile.pattern)
 	end
 end
 function world.limitMovement(oldX, oldY, newX, newY)
