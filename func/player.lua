@@ -141,6 +141,19 @@ function player.draw()
 
 	if daggerOut ~= 0 then
 		local xDagger, yDagger, rot = 0, 0, 0
+		local xOffset, yOffset = 8, -80
+		if playerDirection == "down" then
+			yOffset = 48
+			xOffset = -24
+		end
+		if playerDirection == "right" then
+			yOffset = 0
+			xOffset = 32
+		end
+		if playerDirection == "left" then
+			yOffset = -32
+			xOffset = -32
+		end
 		yDagger = math.abs(daggerOut-0.5)*32
 		if playerDirection == "down" or playerDirection == "right" then
 			yDagger = yDagger * -1
@@ -151,7 +164,7 @@ function player.draw()
 			yDagger = 0
 			rot = rot - math.pi/2
 		end
-		love.graphics.draw(dagger,  width / 2 - 16 + xDagger, height / 2 - 96 + yDagger, rot, 2, 2)
+		love.graphics.draw(dagger,  width / 2 + xOffset + xDagger, height / 2 + yOffset + yDagger, rot, 2, 2, 16, 16)
 	end
 	if axeOut ~= 0 then
 		local rot = axeOut + math.pi * 1.75
