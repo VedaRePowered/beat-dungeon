@@ -266,6 +266,20 @@ function setSamples(songData, newSamples)
 end
 
 
+--
+-- Extract the audio samples from the given SongData
+-- into a floating point array (table).
+--
+function getBpmAndOffset(songData)
+	local samples = getSamples(songData)
+	local sampleRate = songData:getSampleRate()
+
+	local lowPasSamples = lowPassFilter(samples, sampleRate, 300)
+
+	return computeBpmAndOffset(lowPasSamples, sampleRate)
+end
+
+
 local music = {}
 
 function music.loadSong(songPath)
@@ -274,11 +288,7 @@ function music.loadSong(songPath)
 	local songData = love.sound.newSoundData(songPath)
 	local duration = songData:getDuration()
 	local sampleRate = songData:getSampleRate()
-	local samples = getSamples(songData)
-	local lowPasSamples = lowPassFilter(samples, sampleRate, 300)
-	samples = nil
-	local beatsPerMinute, offset = computeBpmAndOffset(lowPasSamples, sampleRate)
-	lowPasSamples = nil
+	local beatsPerMinute, offset = getBpmAndOffset(songData)
 	local secondsPerBeat = 60 / beatsPerMinute
 	local source = love.audio.newSource(songData)
 
