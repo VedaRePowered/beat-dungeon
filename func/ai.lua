@@ -22,6 +22,7 @@ end
 function ai.update()
 	local songBeat = song.getBeat()
 	for _, aiTile in pairs(ais) do
+		local playerX, playerY = player.getPosition()
 		local action = aiTile.pattern[(songBeat + aiTile.start) % #aiTile.pattern + 1]
 		local tile, rotation, costume = world.get(aiTile.x, aiTile.y)
 		local newX = aiTile.x
@@ -103,13 +104,11 @@ function ai.update()
 				ais[aiTile.id] = nil
 				world.unset(aiTile.x, aiTile.y)
 			elseif string.sub(action, 1, 12) == "actAsABomber" then
-				local playerX, playerY = player.getPosition()
+				dangerous = false
 				if costume == 2 then
-					dangerous = false
 					ais[aiTile.id] = nil
 					world.unset(aiTile.x, aiTile.y)
-				elseif math.sqrt(math.abs(playerX-aiTile.x)^2 + math.abs(playerX-aiTile.x)^2) < 25 then
-					dangerous = false
+				elseif math.sqrt(math.abs(playerX-aiTile.x)^2 + math.abs(playerX-aiTile.x)^2) < 10 then
 					local playerDistanceX = playerX-aiTile.x
 					local playerDistanceY = playerY-aiTile.y
 					if math.abs(playerDistanceX) > math.abs(playerDistanceY) then
@@ -125,7 +124,7 @@ function ai.update()
 							newRotation = 4
 						end
 					end
-					if math.floor(playerDistanceX) < 1 and math.floor(playerDistanceY) < 1 then
+					if math.abs(playerDistanceX) < 1.5 and math.abs(playerDistanceY) < 1.5 then
 						player.changeHealth(-2, tile.name)
 						newCostume = 2
 					else
@@ -157,7 +156,6 @@ function ai.update()
 				world.set(aiTile.x, aiTile.y, tile.id, newRotation, newCostume)
 			end
 
-			local playerX, playerY = player.getPosition()
 			if dangerous and aiTile.x == math.floor(playerX) and aiTile.y == math.floor(playerY) then
 				player.changeHealth(-1, tile.name)
 			end
