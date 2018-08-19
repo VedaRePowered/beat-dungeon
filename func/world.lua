@@ -7,6 +7,7 @@ local tileRotations = {}
 local heightInBlocks
 local widthInBlocks
 local tileSize, tileFactor = tiles.getTileSizeAndFactor()
+local tileFullSize = tileSize * tileFactor
 
 function world.getSize()
 	return widthInBlocks, heightInBlocks
@@ -80,30 +81,61 @@ function world.limitMovement(oldX, oldY, newX, newY)
 
 	return newX, newY
 end
-function drawRow(width, height, tilePlayerX, tilePlayerY, pOffsetX, pOffsetY, screenBlocksX, y, underPlayer)
+function drawRow(middleX, tilePlayerX, tilePlayerY, pOffsetX, screenBlocksX, y, rowTop, underPlayer)
 	for x = math.floor(-screenBlocksX/2), screenBlocksX/2 do
 		local tile, rotation = world.get(tilePlayerX + x, tilePlayerY + y)
 		if tile and tile.underPlayer == underPlayer then
 			local image = tiles.getImage(tile.id, rotation)
-			love.graphics.draw(image, (x-pOffsetX)*tileSize*tileFactor+width/2, 720-((y-pOffsetY)*tileSize*tileFactor+height/2)-128, 0, tileFactor, tileFactor)
+			local columnLeft = middleX + ((x - pOffsetX) * tileFullSize)
+			love.graphics.draw(
+				image,
+				columnLeft,
+				rowTop - tileFullSize, -- tiles are double-tall to allow covering sprites behind
+				0,
+				tileFactor,
+				tileFactor)
 		end
 	end
 end
 function world.draw()
 	local width, height = love.window.getMode()
+	local middleX = width / 2
+	local middleY = height / 2
 	local playerX, playerY = player.getPosition()
 	local tilePlayerX = math.floor(playerX)
 	local tilePlayerY = math.floor(playerY)
 	local pOffsetX = playerX - tilePlayerX
 	local pOffsetY = playerY - tilePlayerY
-	local screenBlocksX = math.ceil(width/tileSize/2)
-	local screenBlocksY = math.ceil(height/tileSize/2)
+	local screenBlocksX = math.ceil(middleX / tileSize)
+	local screenBlocksY = math.ceil(middleY / tileSize)
+
+	love.graphics.setColor(34/255, 17/255, 17/255)
+	-- draw black-ish bar on the bottom
+	local bottomBlackStart = middleY + ((playerY - 1) * tileFullSize)
+	if bottomBlackStart < height then
+		love.graphics.rectangle("fill", 0, bottomBlackStart, width, height - bottomBlackStart)
+	end
+
+	-- draw black-ish bars on right and left
+	local leftBlackEnd = middleX - (playerX * tileFullSize)
+	if leftBlackEnd > 0 then
+		love.graphics.rectangle("fill", 0, 0, leftBlackEnd, height)
+	end
+	local rightBlackStart = (widthInBlocks - playerX + 2) * tileFullSize + middleX
+	if rightBlackStart < width then
+		love.graphics.rectangle("fill", rightBlackStart, 0, width - rightBlackStart, height)
+	end
+	love.graphics.setColor(1, 1, 1)
+
+	-- draw remaining tiles
 	for y = math.floor(screenBlocksY/2), -screenBlocksY/2-1, -1 do
-		drawRow(width, height, tilePlayerX, tilePlayerY, pOffsetX, pOffsetY, screenBlocksX, y, true)
+		local rowTop = middleY - ((y - pOffsetY + 1) * tileFullSize)
+
+		drawRow(middleX, tilePlayerX, tilePlayerY, pOffsetX, screenBlocksX, y, rowTop, true)
 		if y == -1 then
 			player.draw()
 		end
-		drawRow(width, height, tilePlayerX, tilePlayerY, pOffsetX, pOffsetY, screenBlocksX, y, false)
+		drawRow(middleX, tilePlayerX, tilePlayerY, pOffsetX, screenBlocksX, y, rowTop, false)
 	end
 end
 return world
