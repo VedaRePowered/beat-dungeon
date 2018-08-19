@@ -18,13 +18,13 @@ function tiles.declareTiles()
 	tiles.declareObstacle("Pit", "pit", "tiles/pit", true, false, 1)
 	tiles.declareObstacle("Spikes", "spikes", "tiles/spikes", true, false, 3)
 
-	tiles.declareObstacle("Tiger Bomb", "tigerbomb", "tiles/tigerbomb", false, false, 4)
+	tiles.declareObstacle("Tiger Balm", "tigerbalm", "tiles/tigerbalm", false, false, 4)
 	tiles.declareObstacle("Skele Bones", "skeleton", "tiles/skelebones", false, true, 1)
 	tiles.declareObstacle("Green Slime", "slime1", "tiles/greenslime", false, true, 1)
 	tiles.declareObstacle("Blue Slime", "slime2", "tiles/blueslime", false, true, 1)
 	tiles.declareObstacle("Zom Bob", "zombie", "tiles/zombob", false, true, 1)
 
-	tiles.declareProjectile("Tiger Bomb's Bomb", "tigerbombbomb", "tiles/tigerbombbomb", false, false, 3)
+	tiles.declareProjectile("Tiger Balm's Bomb", "tigerbalmbomb", "tiles/tigerbalmbomb", false, false, 3)
 
 	tiles.declareWall("left", "tiles/wall-left1")
 	tiles.declareWall("left", "tiles/wall-left2")

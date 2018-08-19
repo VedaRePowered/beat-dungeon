@@ -82,7 +82,7 @@ function ai.update()
 				dangerous = true
 			elseif string.sub(action, 1, 9) == "throwbomb" then
 				newCostume = 4
-				local bombtile = tiles.getTileByName("Tiger Bomb's Bomb")
+				local bombtile = tiles.getTileByName("Tiger Balm's Bomb")
 				if not world.get(aiTile.x - 1, aiTile.y) then
 					world.set(aiTile.x - 1, aiTile.y, bombtile.id, 3, 1)
 					ai.new(aiTile.x - 1, aiTile.y, bombtile.pattern, -songBeat)
