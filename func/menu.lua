@@ -3,6 +3,7 @@ local logo = love.graphics.newImage("assets/logo.png")
 local menuSong = music.loadSong("assets/music/Bensound - Summer.mp3", 1)
 local menuFont = love.graphics.newFont("assets/fonts/pixelated.ttf", 36)
 local selectSong = false
+local showInstructions = false
 local selectedSong = "Bensound - House.mp3"
 local difficulty = 1
 menuSong.play()
@@ -66,6 +67,12 @@ function menu.update(delta)
 						selectedSong = songs[index]
 					end
 				end
+			elseif showInstructions then
+				if row == 13 and column == 1 then
+					showInstructions = false
+					selectedColumn = 1
+					selectedRow = 8
+				end
 			else
 				if row == 6 and column == 1 then
 					menuSong.stop()
@@ -78,14 +85,18 @@ function menu.update(delta)
 					selectedColumn = 1
 					selectedRow = 5
 				elseif row == 8 and column == 1 then
+					showInstructions = true
+					selectedColumn = 1
+					selectedRow = 13
+				elseif row == 9 and column == 1 then
 					love.event.quit(0)
-				elseif row == 10 and column == 1 then
+				elseif row == 11 and column == 1 then
 					difficulty = 0.5
 					menuSong.setBpmMultiplier(difficulty)
-				elseif row == 11 and column == 1 then
+				elseif row == 12 and column == 1 then
 					difficulty = 1
 					menuSong.setBpmMultiplier(difficulty)
-				elseif row == 12 and column == 1 then
+				elseif row == 13 and column == 1 then
 					difficulty = 2
 					menuSong.setBpmMultiplier(difficulty)
 				end
@@ -119,11 +130,14 @@ function menu.update(delta)
 							selectedRow = 5
 						end
 					end
+				elseif showInstructions then
+					selectedColumn = 1
+					selectedRow = 13
 				else
 					if selectedRow < 6 then
 						selectedRow = 6
-					elseif selectedRow == 9 then
-						selectedRow = 8
+					elseif selectedRow == 10 then
+						selectedRow = 9
 					end
 				end
 				if selectedRow < 1 then
@@ -143,11 +157,14 @@ function menu.update(delta)
 							selectedRow = 7
 						end
 					end
+				elseif showInstructions then
+					selectedColumn = 1
+					selectedRow = 13
 				else
 					if selectedRow > 12 then
 						selectedRow = 12
-					elseif selectedRow == 9 then
-						selectedRow = 10
+					elseif selectedRow == 10 then
+						selectedRow = 11
 					end
 				end
 				if selectedRow > 20 then
@@ -204,11 +221,28 @@ function menu.draw()
 		end
 		numberOfSongs= #songs
 		hasColumnTwo = #songs > 14
+	elseif showInstructions then
+		local y = 144
+		love.graphics.print("Instructions:", 0, y)
+		y = y + 72
+		love.graphics.print("Use arrow keys or a joystick to move your character as far as possible.  Avoid", 0, y)
+		y = y + 36
+		love.graphics.print("enemies (who move to the beat of your song) while your music plays.  Get as far", 0, y)
+		y = y + 36
+		love.graphics.print("as possible without running out of health (hearts) before the end of your song", 0, y)
+		y = y + 36
+		love.graphics.print("for a high score!  Attack your enemies by using the 'Z' and 'X' keys or the", 0, y)
+		y = y + 36
+		love.graphics.print("shoulder buttons on the game pad.", 0, y)
+
+		drawMenuOption(13, 1, "Done", mouseX, mouseY)
+		hasColumnTwo = false
 	else
 		love.graphics.setFont(menuFont)
 		drawMenuOption(6, 1, "Play", mouseX, mouseY)
 		drawMenuOption(7, 1, "Select Song (" .. string.sub(selectedSong, 1, string.len(selectedSong)-4) .. ")", mouseX, mouseY)
-		drawMenuOption(8, 1, "Exit", mouseX, mouseY)
+		drawMenuOption(8, 1, "Instructions", mouseX, mouseY)
+		drawMenuOption(9, 1, "Exit", mouseX, mouseY)
 
 		local de, dn, dh = "", "", ""
 		if difficulty == 0.5 then
@@ -218,9 +252,9 @@ function menu.draw()
 		elseif difficulty == 2 then
 			dh = "*"
 		end
-		drawMenuOption(10, 1, "Easy" .. de, mouseX, mouseY)
-		drawMenuOption(11, 1, "Normal" .. dn, mouseX, mouseY)
-		drawMenuOption(12, 1, "Hard" .. dh, mouseX, mouseY)
+		drawMenuOption(11, 1, "Easy" .. de, mouseX, mouseY)
+		drawMenuOption(12, 1, "Normal" .. dn, mouseX, mouseY)
+		drawMenuOption(13, 1, "Hard" .. dh, mouseX, mouseY)
 		hasColumnTwo = false
 	end
 end
