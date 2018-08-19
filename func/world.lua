@@ -9,18 +9,19 @@ local tileFullSize = tileSize * tileFactor
 function world.get(x, y)
 	if worldTiles[y] and worldTiles[y][x] then
 		local worldTile = worldTiles[y][x]
-		return tiles.get(worldTile.tileId), worldTile.rotation
+		return worldTile.tile, worldTile.rotation, worldTile.costume
 	else
 		return false
 	end
 end
-function world.set(x, y, tileId, rotation)
+function world.set(x, y, tileId, rotation, costume)
 	if not worldTiles[y] then
 		worldTiles[y] = {}
 	end
 	worldTiles[y][x] = {
-		tileId=tileId,
-		rotation = rotation
+		tile=tiles.get(tileId),
+		rotation=rotation,
+		costume=costume
 	}
 end
 function world.unset(x, y)
@@ -37,14 +38,14 @@ function world.gen(width, height)
 
 	worldTiles = {}
 	for y = 1, height do
-		world.set(0, y, tiles.randomWall("left"), 1)
-		world.set(width + 1, y, tiles.randomWall("right"), 1)
+		world.set(0, y, tiles.randomWall("left"), 1, 1)
+		world.set(width + 1, y, tiles.randomWall("right"), 1, 1)
 
 		for x = 1, width do
 			local nearPlayer = math.abs(x - playerX) < 4 and math.abs(y - playerY) < 4
 			if not nearPlayer and math.random(1, 10) == 1 then
 				local tile = tiles.random()
-				world.set(x, y, tile, 1)
+				world.set(x, y, tile, 1, 1)
 				if tiles.get(tile).pattern then
 					ai.new(x, y, tiles.get(tile).pattern)
 				end
@@ -77,9 +78,9 @@ function world.limitMovement(oldX, oldY, newX, newY)
 end
 function drawRow(middleX, tilePlayerX, tilePlayerY, pOffsetX, screenBlocksX, y, rowTop, underPlayer)
 	for x = math.floor(-screenBlocksX/2), screenBlocksX/2 do
-		local tile, rotation = world.get(tilePlayerX + x, tilePlayerY + y)
+		local tile, rotation, costume = world.get(tilePlayerX + x, tilePlayerY + y)
 		if tile and tile.underPlayer == underPlayer then
-			local image = tiles.getImage(tile.id, rotation)
+			local image = tiles.getImage(tile.id, rotation, costume)
 			local columnLeft = middleX + ((x - pOffsetX) * tileFullSize)
 			love.graphics.draw(
 				image,

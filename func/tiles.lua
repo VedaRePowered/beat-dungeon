@@ -14,12 +14,13 @@ function tiles.loadImage(path)
 end
 
 function tiles.declareTiles()
-	tiles.declare("pillar", false, "tiles/pillar", false, false)
-	tiles.declare("spikes", false, "tiles/spikes1", true, false)
-	tiles.declare("skele bones", "skeleton", "tiles/skelebones", false, true)
-	tiles.declare("green slime", "slime1", "tiles/greenslime", false, true)
-	tiles.declare("blue slime", "slime2", "tiles/blueslime", false, true)
-	tiles.declare("zom bob", "zombie", "tiles/zombob", false, true)
+	tiles.declare("pillar", false, "tiles/pillar", false, false, 1)
+	tiles.declare("spikes", "spikes", "tiles/spikes", true, false, 3)
+	tiles.declare("pit", "pit", "tiles/pit", true, false, 1)
+	tiles.declare("skele bones", "skeleton", "tiles/skelebones", false, true, 1)
+	tiles.declare("green slime", "slime1", "tiles/greenslime", false, true, 1)
+	tiles.declare("blue slime", "slime2", "tiles/blueslime", false, true, 1)
+	tiles.declare("zom bob", "zombie", "tiles/zombob", false, true, 1)
 
 	tiles.declareWall("left", "tiles/wall-left1")
 	tiles.declareWall("left", "tiles/wall-left2")
@@ -31,7 +32,7 @@ function tiles.declareTiles()
 	tiles.declareWall("right", "tiles/wall-right4")
 end
 
-function createTile(id, name, patternFile, image, underPlayer, rotatable)
+function createTile(id, name, patternFile, image, underPlayer, rotatable, costumes)
 	if patternFile then
 		p = io.open("assets/patterns/" .. patternFile .. ".txt")
 		pattern = {}
@@ -43,15 +44,21 @@ function createTile(id, name, patternFile, image, underPlayer, rotatable)
 		pattern = false
 	end
 	local images = {}
-	if rotatable then
-		table.insert(images, tiles.loadImage("assets/" .. image .. "Right.png"))
-		table.insert(images, tiles.loadImage("assets/" .. image .. "Up.png"))
-		table.insert(images, tiles.loadImage("assets/" .. image .. "Left.png"))
-		table.insert(images, tiles.loadImage("assets/" .. image .. "Down.png"))
-	else
-		local img = tiles.loadImage("assets/" .. image .. ".png")
-		for i = 1, 4 do
-			table.insert(images, img)
+	for costume = 1, costumes do
+		local costumeName = ""
+		if costumes and costumes > 1 then
+			costumeName = costume
+		end
+		if rotatable then
+			table.insert(images, tiles.loadImage("assets/" .. image .. "Right" .. costumeName .. ".png"))
+			table.insert(images, tiles.loadImage("assets/" .. image .. "Up" .. costumeName .. ".png"))
+			table.insert(images, tiles.loadImage("assets/" .. image .. "Left" .. costumeName .. ".png"))
+			table.insert(images, tiles.loadImage("assets/" .. image .. "Down" .. costumeName .. ".png"))
+		else
+			local img = tiles.loadImage("assets/" .. image .. costumeName .. ".png")
+			for i = 1, 4 do
+				table.insert(images, img)
+			end
 		end
 	end
 	return {
@@ -59,12 +66,13 @@ function createTile(id, name, patternFile, image, underPlayer, rotatable)
 		name=name,
 		pattern=pattern,
 		images=images,
-		underPlayer=underPlayer
+		underPlayer=underPlayer,
+		costumes=costumes
 	}
 end
-function tiles.declare(name, patternFile, image, underPlayer, rotatable)
+function tiles.declare(name, patternFile, image, underPlayer, rotatable, costumes)
 	id = #tileList + 1
-	local newTile = createTile(id, name, patternFile, image, underPlayer, rotatable)
+	local newTile = createTile(id, name, patternFile, image, underPlayer, rotatable, costumes)
 	tileList[id] = newTile
 	table.insert(nonWallList, newTile)
 end
@@ -79,7 +87,7 @@ function tiles.declareWall(type, image)
 	end
 
 	id = #tileList + 1
-	local newTile = createTile(id, type .. id, false, image, false, false)
+	local newTile = createTile(id, type .. id, false, image, false, false, 1)
 	tileList[id] = newTile
 	table.insert(wallList, newTile)
 end
@@ -102,7 +110,8 @@ end
 function tiles.get(id)
 	return tileList[id]
 end
-function tiles.getImage(id, rotation)
-	return tileList[id].images[rotation]
+function tiles.getImage(id, rotation, costume)
+	local index = (costume - 1) * 4 + rotation
+	return tileList[id].images[index]
 end
 return tiles
