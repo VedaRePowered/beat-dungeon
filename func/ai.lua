@@ -32,7 +32,7 @@ function ai.update()
 				rotation = 1
 			end
 			world.set(tile.x, tile.y, type.id, rotation)
-		elseif string.sub(action, 1, 5) == "right" then
+		elseif string.sub(action, 1, 5) == "left" then
 			local type, rotation = world.get(tile.x, tile.y)
 			rotation = rotation - 1
 			if rotation < 1 then
