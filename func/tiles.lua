@@ -7,6 +7,12 @@ local nonWallList = {}
 local tileSize = 32
 local tileFactor = 2
 
+function tiles.loadImage(path)
+	local image = love.graphics.newImage(path)
+	image:setFilter("nearest")
+	return image
+end
+
 function tiles.declareTiles()
 	tiles.declare("pillar", false, "tiles/pillar", false, false)
 	tiles.declare("spikes", false, "tiles/spikes1", true, false)
@@ -38,18 +44,15 @@ function createTile(id, name, patternFile, image, underPlayer, rotatable)
 	end
 	local images = {}
 	if rotatable then
-		table.insert(images, love.graphics.newImage("assets/" .. image .. "Right.png"))
-		table.insert(images, love.graphics.newImage("assets/" .. image .. "Up.png"))
-		table.insert(images, love.graphics.newImage("assets/" .. image .. "Left.png"))
-		table.insert(images, love.graphics.newImage("assets/" .. image .. "Down.png"))
+		table.insert(images, tiles.loadImage("assets/" .. image .. "Right.png"))
+		table.insert(images, tiles.loadImage("assets/" .. image .. "Up.png"))
+		table.insert(images, tiles.loadImage("assets/" .. image .. "Left.png"))
+		table.insert(images, tiles.loadImage("assets/" .. image .. "Down.png"))
 	else
-		local img = love.graphics.newImage("assets/" .. image .. ".png")
+		local img = tiles.loadImage("assets/" .. image .. ".png")
 		for i = 1, 4 do
 			table.insert(images, img)
 		end
-	end
-	for _, img in ipairs(images) do
-		img:setFilter("nearest")
 	end
 	return {
 		id=id,

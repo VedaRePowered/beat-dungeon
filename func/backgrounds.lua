@@ -4,25 +4,25 @@ local bg = {}
 local tileSize, tileFactor = tiles.getTileSizeAndFactor()
 
 bg.cobblestone = {
-	image=love.graphics.newImage("assets/backgrounds/cobblestone.png"),
+	image=tiles.loadImage("assets/backgrounds/cobblestone.png"),
 	width=96,
 	height=96,
 	scale=1
 }
 bg.cobblestone2 = {
-	image=love.graphics.newImage("assets/backgrounds/cobblestone2.png"),
+	image=tiles.loadImage("assets/backgrounds/cobblestone2.png"),
 	width=32,
 	height=32,
 	scale=1
 }
 bg.dirt1 = {
-	image=love.graphics.newImage("assets/backgrounds/dirt1.png"),
+	image=tiles.loadImage("assets/backgrounds/dirt1.png"),
 	width=32,
 	height=64,
 	scale=2
 }
 bg.dirt2 = {
-	image=love.graphics.newImage("assets/backgrounds/dirt2.png"),
+	image=tiles.loadImage("assets/backgrounds/dirt2.png"),
 	width=32,
 	height=64,
 	scale=2

@@ -3,8 +3,7 @@ local playerX
 local playerY
 local playerWidth = 64
 local playerHeight = 64
-local heart = love.graphics.newImage("assets/heart.png")
-heart:setFilter("nearest")
+local heart = tiles.loadImage("assets/heart.png")
 local health = 4
 local moveTime = 0
 local hurtCooldown = 0
@@ -12,20 +11,20 @@ local hurtCooldown = 0
 local playerDirection = "up"
 local playerImages = {
 	up = {
-		love.graphics.newImage("assets/character/characterUp1.png"),
-		love.graphics.newImage("assets/character/characterUp2.png")
+		tiles.loadImage("assets/character/characterUp1.png"),
+		tiles.loadImage("assets/character/characterUp2.png")
 	},
 	down = {
-		love.graphics.newImage("assets/character/characterDown1.png"),
-		love.graphics.newImage("assets/character/characterDown2.png")
+		tiles.loadImage("assets/character/characterDown1.png"),
+		tiles.loadImage("assets/character/characterDown2.png")
 	},
 	left = {
-		love.graphics.newImage("assets/character/characterLeft1.png"),
-		love.graphics.newImage("assets/character/characterLeft2.png")
+		tiles.loadImage("assets/character/characterLeft1.png"),
+		tiles.loadImage("assets/character/characterLeft2.png")
 	},
 	right = {
-		love.graphics.newImage("assets/character/characterRight1.png"),
-		love.graphics.newImage("assets/character/characterRight2.png")
+		tiles.loadImage("assets/character/characterRight1.png"),
+		tiles.loadImage("assets/character/characterRight2.png")
 	}
 }
 
@@ -105,7 +104,7 @@ function player.draw()
 	local width, height = love.window.getMode()
 	local frame = math.floor(moveTime / 0.2) % 2 + 1
 
-	love.graphics.draw(playerImages[playerDirection][frame], width / 2 - 16, height / 2 - playerHeight + 16)
+	love.graphics.draw(playerImages[playerDirection][frame], width / 2 - playerWidth / 2, height / 2 - playerHeight * 1.5, 0, 2, 2)
 end
 function player.changeHealth(by)
 	health = health + by
