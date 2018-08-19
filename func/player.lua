@@ -42,7 +42,10 @@ function player.resetPosition(width)
 	return player.getPosition()
 end
 function player.update(delta)
-	hurtCooldown = hurtCooldown - delta
+	hurtCooldown = hurtCooldown - delta * 2
+	if hurtCooldown < 0 then
+		hurtCooldown = 0
+	end
 	local newPlayerX = playerX
 	local newPlayerY = playerY
 	local moved = false
@@ -106,15 +109,22 @@ function player.draw()
 end
 function player.changeHealth(by)
 	health = health + by
+	hurtCooldown = 1
 	if health < 1 then
 		mode = "end"
 		song.stop()
 	end
 end
 function player.drawHUD()
+	local width, height = love.window.getMode()
 	love.graphics.print("Score: " .. math.floor(playerY - 32), 15, 10)
 	for i = 1, health do
 		love.graphics.draw(heart, 1280-20*i-15, 15, 0, 2, 2)
+	end
+	if hurtCooldown > 0 then
+		love.graphics.setColor(231/256, 76/256, 60/256, hurtCooldown)
+		love.graphics.rectangle("fill", 0, 0, width, height)
+		love.graphics.setColor(1, 1, 1, 1)
 	end
 end
 return player
