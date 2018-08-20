@@ -39,15 +39,15 @@ end
 
 function createTile(id, name, patternFile, image, underPlayer, rotatable, costumes)
 	if patternFile then
-		p = io.open("assets/patterns/" .. patternFile .. ".txt")
-		if not p then
+		p = love.filesystem.newFile("assets/patterns/" .. patternFile .. ".txt")
+		if not p:open("r") then
 			error("Could not find pattern: " .. patternFile)
 		end
 		pattern = {}
 		for action in p:lines() do
 			table.insert(pattern, action)
 		end
-		p.close()
+		p:close()
 	else
 		pattern = false
 	end

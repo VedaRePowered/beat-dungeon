@@ -293,11 +293,11 @@ function music.loadSong(songPath, bpmMultiplyer)
 	local secondsPerBeat = 60 / beatsPerMinute
 	local source = love.audio.newSource(songData)
 
-	print("Duration is " .. duration)
-	print("Sample rate is " .. sampleRate)
-	print("BPM is " .. beatsPerMinute)
-	print("Seconds per beat is " .. secondsPerBeat)
-	print("Offset is " .. offset)
+	-- print("Duration is " .. duration)
+	-- print("Sample rate is " .. sampleRate)
+	-- print("BPM is " .. beatsPerMinute)
+	-- print("Seconds per beat is " .. secondsPerBeat)
+	-- print("Offset is " .. offset)
 
 	function songObject.play()
 		source:play()
